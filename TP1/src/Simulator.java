@@ -1,8 +1,6 @@
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner; // Import the Scanner class to read text files
+import java.util.*;
 
 public class Simulator {
 
@@ -39,55 +37,8 @@ public class Simulator {
 
         Integer[][][] matrix = new Integer[M][M][];
 
-        //asignar particulas a celdas segun su ubicacion
-        int id = 0;
-        for (Double[] doubles : particlesArray){
-            double x = doubles[2];
-            double y = doubles[3];
-            System.out.println("x" + x);
-            System.out.println("y" + y);
-            int row;
-            int col ;
-
-            if( x <= ancho ) {
-                col = 0;
-                System.out.println("columna: " + col);
-            }
-            else {
-                col = (int) (x / ancho);
-                System.out.println("columna: " + col);
-            }
-
-            if( y <= ancho ){
-                row = 0;
-                System.out.println("fila: " + row);
-            }
-            else{
-                row = (int) (y / ancho);
-                System.out.println("fila: " + row);
-            }
-
-            Integer[] current = matrix[row][col];
-            if(current != null) {
-                Integer[] aux = {id};
-                int aLen = current.length;
-                int bLen = aux.length;
-                Integer[] result = new Integer[aLen + bLen];
-                System.arraycopy(current, 0, result, 0, aLen);
-                System.arraycopy(aux, 0, result, aLen, bLen);
-
-                matrix[row][col] = result;
-
-                //System.out.println(Arrays.toString(result));
-            }
-            else {
-                Integer[] aux = {id};
-                matrix[row][col] = aux;
-                //System.out.println(Arrays.toString(aux));
-            }
-
-            id++;
-        }
+        // asignar particulas a celdas segun su ubicacion
+        FillMatrix(particlesArray, matrix, ancho);
 
         // imprimo matrix
         for (Integer[][] integers : matrix) {
@@ -97,8 +48,11 @@ public class Simulator {
             System.out.println();
         }
 
-        //calcular distancias soloentre partículas de celdas vecinas
+        //calcular distancias solo entre partículas de celdas vecinas
+        Map<Integer, List<Integer>> cim = new HashMap<Integer, List<Integer>>();
+        CellIndexMethod(M, rc, cim, matrix);
 
+        System.out.println("mapa final" + cim);
     }
 
     public static void CellIndexMethod(int N, int L, int M, int rc, ArrayList<Double[]> particlesArray){
