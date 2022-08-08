@@ -4,8 +4,9 @@ import java.util.*;
 
 public class Simulator {
 
-    static int N = 0;
-    static int L = 0;
+    public static int N = 0;
+    public static int L = 0;
+    public static double r_max = 0;
 
     static int time = 0;
 
@@ -13,7 +14,11 @@ public class Simulator {
     // radio propiedad x y
 
     public static void main(String[] args) {
-        ParseParameters(args[0], args[1]);
+        Parser.ParseParameters(args[0], args[1], L, N, r_max, particlesArray, time);
+
+//        for (Double[] particle : particlesArray){
+//            System.out.println("particlesArray: " + Arrays.toString(particle));
+//        }
 
         //calcular M
         double ancho = Math.sqrt(L);
@@ -123,25 +128,23 @@ public class Simulator {
                     }
                     SearchNeighbours(neighbours, currentIds, cim, rc);
 
-                    // vecino abajo
-                    System.out.println("vecinos abajo");
-                    if(i<M-1) { // si no es extremo
-                        Integer[] neighboursDown = matrix[i + 1][j];
-                        System.out.println("vecinos abajo" + Arrays.toString(neighboursDown));
-                        if (neighboursDown == null) {
-                            continue;
-                        }
+                // vecino abajo
+                if(i < M-1) { // si no es extremo de abajo
+                    Integer[] neighboursDown = matrix[i + 1][j];
+                    System.out.println("vecinos abajo: " + Arrays.toString(neighboursDown));
+                    if (neighboursDown != null) {
                         SearchNeighbours(neighboursDown, currentIds, cim, rc);
                     }
+                }
 
-                    // vecino izquierda
-                    System.out.println("vecinos izquierda");
+                // vecino izquierda
+                if(j != 0) { // si no es la primera columna
                     Integer[] neighboursLeft = matrix[i][j - 1];
-                    System.out.println("vecinos izquierda" + Arrays.toString(neighboursLeft));
-                    if(neighboursLeft == null) {
-                        continue;
+                    System.out.println("vecinos izquierda: " + Arrays.toString(neighboursLeft));
+                    if (neighboursLeft != null) {
+                        SearchNeighbours(neighboursLeft, currentIds, cim, rc);
                     }
-                    SearchNeighbours(neighboursLeft, currentIds, cim, rc);
+                }
 
                     // vecino derecha
                     if (j < M-1) { // si no es un extremo
@@ -176,104 +179,156 @@ public class Simulator {
                         SearchNeighbours(neighboursDownRight, currentIds, cim, rc);
                     }
 
-                    // vecino arriba izquierda
-                    System.out.println("vecinos arriba izquierda");
+                // vecino arriba izquierda
+                if(i != 0 && j != 0) { //si no es la primer fila
                     Integer[] neighboursUpLeft = matrix[i - 1][j - 1];
-                    System.out.println("vecinos arriba izquierda" + Arrays.toString(neighboursUpLeft));
-                    if(neighboursUpLeft == null) {
-                        continue;
+                    System.out.println("vecinos arriba izquierda: " + Arrays.toString(neighboursUpLeft));
+                    if (neighboursUpLeft != null) {
+                        SearchNeighbours(neighboursUpLeft, currentIds, cim, rc);
                     }
-                    SearchNeighbours(neighboursUpLeft, currentIds, cim, rc);
+                }
 
-                    // vecino arriba derecha
-                    if(j < M-1){ //si no es extremo
-                        System.out.println("vecinos arriba derecha");
+                // vecino arriba derecha
+                if(i != 0) { // si no es la primera fila
+                    if (j < M - 1) { //si no es extremo
                         Integer[] neighboursUpRight = matrix[i - 1][j + 1];
-                        System.out.println("vecinos arriba derecha" + Arrays.toString(neighboursUpRight));
-                        if(neighboursUpRight == null) {
-                            continue;
+                        System.out.println("vecinos arriba derecha: " + Arrays.toString(neighboursUpRight));
+                        if (neighboursUpRight != null) {
+                            SearchNeighbours(neighboursUpRight, currentIds, cim, rc);
                         }
-                        SearchNeighbours(neighboursUpRight, currentIds, cim, rc);
+                    }
+                }
+
+                // si es la primera fila o la ultima && condiciones periodicas
+                if(periodic && (i == 0 || i == M-1)){
+                    int aux_i = (i == 0)? M-1 : 0;
+                    // arriba izquierda
+                    if(j != 0) { //i != 0 && i != M-1 ||
+                        Integer[] neighboursUpLeft = matrix[aux_i][j - 1];
+                        System.out.println("periodic vecinos arriba izquierda: " + Arrays.toString(neighboursUpLeft));
+                        if (neighboursUpLeft != null) {
+                            SearchNeighbours(neighboursUpLeft, currentIds, cim, rc);
+                        }
                     }
 
+                    // arriba
+                    Integer[] neighboursUp = matrix[aux_i][j];
+                    System.out.println("periodic vecinos arriba: " + Arrays.toString(neighboursUp));
+                    if (neighboursUp != null) {
+                        SearchNeighbours(neighboursUp, currentIds, cim, rc);
+                    }
+
+                    if(j != M-1) {
+                        // arriba derecha
+                        Integer[] neighboursUpRight = matrix[aux_i][j + 1];
+                        System.out.println("periodic vecinos arriba derecha: " + Arrays.toString(neighboursUpRight));
+                        if (neighboursUpRight != null) {
+                            SearchNeighbours(neighboursUpRight, currentIds, cim, rc);
+                        }
+                    }
+                }
+
+                // si es la primera columna o la ultima && condiciones periodicas
+                if(periodic && (j == 0 || j == M-1) && i != 0){
+                    int aux_j = (j == 0)? M-1 : 0;
+
+                    //izquierda
+                    Integer[] neighboursL = matrix[i][aux_j];
+                    System.out.println("periodic vecinos izquierda: " + Arrays.toString(neighboursL));
+                    if(neighboursL != null) {
+                        SearchNeighbours(neighboursL, currentIds, cim, rc);
+                    }
+
+                    //arriba
+                    Integer[] neighboursD = matrix[i-1][aux_j];
+                    System.out.println("periodic vecinos arriba: " + Arrays.toString(neighboursD));
+                    if(neighboursD != null) {
+                        SearchNeighbours(neighboursD, currentIds, cim, rc);
+                    }
+
+                    //abajo
+                    if(i != M-1) {
+                        Integer[] neighbours3 = matrix[i + 1][aux_j];
+                        System.out.println("periodic vecinos abajo: " + Arrays.toString(neighbours3));
+                        if (neighbours3 != null) {
+                            SearchNeighbours(neighbours3, currentIds, cim, rc);
+                        }
+                    }
+                }
+
+                //extremo esquina arriba izquierda
+                if(periodic && j==0 && i==0){
+                    int aux_j = M-1 ;
+                    int aux_i = M-1;
+                    Integer[] neighbours3 = matrix[i][aux_j];
+                    if(neighbours3 != null) {
+                        SearchNeighbours(neighbours3, currentIds, cim, rc);
+                    }
+                    Integer[] neighbours4 = matrix[i+1][aux_j];
+                    if(neighbours4 != null) {
+                        SearchNeighbours(neighbours4, currentIds, cim, rc);
+                    }
+                    Integer[] neighbours5 = matrix[aux_i][aux_j];
+                    if(neighbours5 != null) {
+                        SearchNeighbours(neighbours5, currentIds, cim, rc);
+                    }
+                }
+
+                //extremo esquina abajo izquierda
+                if(periodic && j==0 && i==M-1){
+                    Integer[] neighboursAbI3 = matrix[i][M-1];
+                    System.out.println("periodic vecinos izquierda: " + Arrays.toString(neighboursAbI3));
+                    if(neighboursAbI3 != null) {
+                        SearchNeighbours(neighboursAbI3, currentIds, cim, rc);
+                    }
+                    Integer[] neighboursAbI4 = matrix[i-1][M-1];
+                    System.out.println("periodic vecinos arriba izquierda: " + Arrays.toString(neighboursAbI4));
+                    if(neighboursAbI4 != null) {
+                        SearchNeighbours(neighboursAbI4, currentIds, cim, rc);
+                    }
+                    Integer[] neighboursAbI5 = matrix[0][M-1];
+                    System.out.println("periodic vecinos abajo izquierda: " + Arrays.toString(neighboursAbI5));
+                    if(neighboursAbI5 != null) {
+                        SearchNeighbours(neighboursAbI5, currentIds, cim, rc);
+                    }
+                }
+
+                //extremo esquina arriba derecha
+                if(periodic && i==0 && j==M-1){
+                    int aux_i = M-1;
+                    Integer[] neighboursArD3 = matrix[i][0];
+                    System.out.println("vecino derecha" + Arrays.toString(neighboursArD3));
+                    if(neighboursArD3 != null) {
+                        SearchNeighbours(neighboursArD3, currentIds, cim, rc);
+                    }
+                    Integer[] neighboursArD4 = matrix[i+1][0];
+                    System.out.println("vecino derecha abajo" + Arrays.toString(neighboursArD4));
+                    if(neighboursArD4 != null) {
+                        SearchNeighbours(neighboursArD4, currentIds, cim, rc);
+                    }
+                    Integer[] neighboursArD5 = matrix[aux_i][0];
+                    System.out.println("vecino arriba derecha" + Arrays.toString(neighboursArD5));
+                    if(neighboursArD5 != null) {
+                        SearchNeighbours(neighboursArD5, currentIds, cim, rc);
+                    }
+                }
+                //extremo esquina abajo derecha
+                if(periodic && i==M-1 && j==M-1){
+                    Integer[] neighboursAbD3 = matrix[i][0];
+                    if(neighboursAbD3 != null) {
+                        SearchNeighbours(neighboursAbD3, currentIds, cim, rc);
+                    }
+                    Integer[] neighboursAbD4 = matrix[i-1][j-1];
+                    if(neighboursAbD4 != null) {
+                        SearchNeighbours(neighboursAbD4, currentIds, cim, rc);
+                    }
+                    Integer[] neighboursAbD5 = matrix[0][0];
+                    if(neighboursAbD5 != null) {
+                        SearchNeighbours(neighboursAbD5, currentIds, cim, rc);
+                    }
                 }
             }
         }
 
     }
-
-    public static void ParseParameters(String static100, String dynamic100){
-        // STATIC
-        try {
-            File staticFile = new File(static100);
-            Scanner myReaderStatic = new Scanner(staticFile);
-
-            // guardo N
-            if (myReaderStatic.hasNextLine()) {
-                String data = myReaderStatic.nextLine();
-                data = data.replaceAll(" ", "");
-                N = Integer.parseInt(data);
-            }
-
-            // guardo L
-            if (myReaderStatic.hasNextLine()) {
-                String data = myReaderStatic.nextLine();
-                data = data.replaceAll(" ", "");
-                L = Integer.parseInt(data);
-            }
-
-            // guardo el resto
-            int id = 0;
-            while (myReaderStatic.hasNextLine()) {
-                String data = myReaderStatic.nextLine();
-                data = data.trim().replaceAll("\\s+", " ");
-                String[] dataStatic = data.split(" ");
-                double radio = Double.parseDouble(dataStatic[0]);
-                double propiedad = Double.parseDouble(dataStatic[1]);
-                Double[] aux = {radio, propiedad};
-                particlesArray.add(aux);
-                id++;
-
-            }
-            myReaderStatic.close();
-
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-
-        // DYNAMIC
-        try {
-            File dynamicFile = new File(dynamic100);
-            Scanner myReaderDynamic = new Scanner(dynamicFile);
-
-            // guardo t0
-            if (myReaderDynamic.hasNextLine()) {
-                String data = myReaderDynamic.nextLine();
-                data = data.replaceAll(" ", "");
-                time = Integer.parseInt(data);
-            }
-
-            // guardo el resto
-            int id = 0;
-            while (myReaderDynamic.hasNextLine()) {
-                String data = myReaderDynamic.nextLine();
-                data = data.trim().replaceAll("\\s+", " ");
-                String[] dataStatic = data.split(" ");
-                double x = Double.parseDouble(dataStatic[0]);
-                double y = Double.parseDouble(dataStatic[1]);
-                Double[] current = particlesArray.get(id);
-                Double[] aux = {current[0], current[1],x,y};
-                particlesArray.set(id,aux);
-                id++;
-
-            }
-            myReaderDynamic.close();
-
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    }
-
 }
