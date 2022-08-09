@@ -70,9 +70,12 @@ public class Parser {
                 String[] dataStatic = data.split(" ");
                 double x = Double.parseDouble(dataStatic[0]);
                 double y = Double.parseDouble(dataStatic[1]);
-                Double[] current = particlesArray.get(id);
-                Double[] aux = {current[0], current[1],x,y};
-                particlesArray.set(id,aux);
+                //Double[] current = particlesArray.get(id);
+                //Double[] aux = {current[0], current[1],x,y};
+                //particlesArray.set(id,aux);
+                Particle particle = particlesArray.get(id);
+                particle.setX(x);
+                particle.setY(y);
                 id++;
 
             }
