@@ -8,11 +8,13 @@ public class Particle {
     private double prop;
     private double x;
     private double y;
+    private List<Integer> neighbours;
 
     public Particle(int id, double radio, double prop) {
         this.id = id;
         this.radio = radio;
         this.prop = prop;
+        this.neighbours = new ArrayList<>();
     }
 
     public List<Integer> getNeighbours() {

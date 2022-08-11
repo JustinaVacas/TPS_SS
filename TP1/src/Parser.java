@@ -36,8 +36,6 @@ public class Parser {
                     Simulator.r_max = radio;
                 }
                 double propiedad = Double.parseDouble(dataStatic[1]);
-                //Double[] aux = {radio, propiedad};
-               // Simulator.particlesArray.add(aux);
                 Particle particle = new Particle(id,radio,propiedad);
                 Simulator.particlesArray.add(particle);
                 id++;

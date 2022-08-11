@@ -56,7 +56,6 @@ public class Simulator {
             FileWriter myWriter = new FileWriter("output.txt");
             for (Map.Entry entry: cim.entrySet()) {
                 myWriter.write(entry.getKey() + "\t");
-                System.out.println("cim.values: "+ entry.getValue());
                 List<Integer> aux = (List<Integer>) entry.getValue();
                 for(Integer cur : aux){
                     myWriter.write(" " + cur);
