@@ -1,5 +1,3 @@
-import javafx.beans.property.SimpleListProperty;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -7,7 +5,7 @@ import java.util.Scanner;
 
 public class Parser {
 
-    public static void ParseParameters(String static100, String dynamic100, int L, int N, double r_max, ArrayList<Particle> particlesArray, int time){
+    public static void ParseParameters(String static100, String dynamic100, double r_max, ArrayList<Particle> particlesArray){
         // STATIC
         try {
             File staticFile = new File(static100);

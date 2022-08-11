@@ -1,4 +1,3 @@
-import java.io.File;  // Import the File class
 import java.io.IOException;  // Import the IOException class to handle errors
 import java.util.*;
 import java.io.FileWriter;   // Import the FileWriter class
@@ -15,7 +14,7 @@ public class Simulator {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-        Parser.ParseParameters(args[0], args[1], L, N, r_max, particlesArray, time);
+        Parser.ParseParameters(args[0], args[1], r_max, particlesArray);
 
         int M = Integer.parseInt(args[2]);
         int rc = Integer.parseInt(args[3]);
@@ -43,7 +42,15 @@ public class Simulator {
         boolean periodic = Boolean.parseBoolean(args[4]); //true;
         CellIndexMethod(M, rc, cim, matrix, periodic);
 
-        System.out.println("mapa final" + cim);
+        System.out.println();
+        System.out.println("Vecinos finales " + cim);
+
+        // asigno los vecinos a cada instancia
+        for(Map.Entry entry: cim.entrySet()) {
+            Particle part = particlesArray.get( (int) entry.getKey());
+            part.setNeighbours((List<Integer>) entry.getValue());
+
+        }
 
         try {
             FileWriter myWriter = new FileWriter("output.txt");
@@ -71,19 +78,13 @@ public class Simulator {
     public static void SearchNeighbours(Integer[] neighbours, Integer[] currentIds, Map<Integer, List<Integer>> cim, int rc){
         for (Integer particleId : neighbours) {
             Particle neighbourParticle = particlesArray.get(particleId);
-            //System.out.println("particula vecina" + Arrays.toString(neighbourParticle));
             for (Integer ids : currentIds) {
                 Particle currentParticle = particlesArray.get(ids);
-                //System.out.println("particula en la celda seleccionada" + Arrays.toString(currentParticle));
-                //double distance = Math.sqrt(Math.pow(neighbourParticle[2] - currentParticle[2], 2) + Math.pow(neighbourParticle[3] - currentParticle[3], 2));
                 double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
                 double edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                //double edge = distance - neighbourParticle[0] - currentParticle[0];
-                System.out.println("edge: "+edge);
                 if (edge <= rc) {
                     cim.putIfAbsent(ids, new ArrayList<Integer>());
                     cim.get(ids).add(particleId);
-                    //System.out.println("mapa de cercanos" + cim);
                 }
             }
         }
@@ -133,18 +134,14 @@ public class Simulator {
 
         for(int i = 0; i < M; i++){
             for(int j = 0; j < M; j++){
-                System.out.println("------------CELDA "+ "i: "+i +" j: "+ j + "------------");
                 Integer[] currentIds = matrix[i][j]; // 2 14
                 if(currentIds == null){
                     continue;
                 }
-                System.out.println("particulas en la celda elegida: " + Arrays.toString(currentIds));
-
                 // vecino arriba
                 if( i != 0 ) {  // si no es la primer fila
                     Integer[] neighbours = matrix[i - 1][j];
-                    System.out.println("vecinos arriba: " + Arrays.toString(neighbours));
-                    if (neighbours != null) {
+                     if (neighbours != null) {
                         SearchNeighbours(neighbours, currentIds, cim, rc);
                     }
                 }
@@ -152,7 +149,6 @@ public class Simulator {
                 // vecino abajo
                 if(i < M-1) { // si no es extremo de abajo
                     Integer[] neighboursDown = matrix[i + 1][j];
-                    System.out.println("vecinos abajo: " + Arrays.toString(neighboursDown));
                     if (neighboursDown != null) {
                         SearchNeighbours(neighboursDown, currentIds, cim, rc);
                     }
@@ -161,7 +157,6 @@ public class Simulator {
                 // vecino izquierda
                 if(j != 0) { // si no es la primera columna
                     Integer[] neighboursLeft = matrix[i][j - 1];
-                    System.out.println("vecinos izquierda: " + Arrays.toString(neighboursLeft));
                     if (neighboursLeft != null) {
                         SearchNeighbours(neighboursLeft, currentIds, cim, rc);
                     }
@@ -170,7 +165,6 @@ public class Simulator {
                 // vecino derecha
                 if (j < M-1) { // si no es un extremo
                     Integer[] neighboursRight = matrix[i][j + 1];
-                    System.out.println("vecinos derecha: " + Arrays.toString(neighboursRight));
                     if (neighboursRight != null) {
                         SearchNeighbours(neighboursRight, currentIds, cim, rc);
                     }
@@ -179,7 +173,6 @@ public class Simulator {
                 // vecino abajo izquierda
                 if(i < M-1 && j != 0){ // si no es extremo
                     Integer[] neighboursDownLeft = matrix[i + 1][j - 1];
-                    System.out.println("vecinos abajo izquierda: " + Arrays.toString(neighboursDownLeft));
                     if(neighboursDownLeft != null) {
                         SearchNeighbours(neighboursDownLeft, currentIds, cim, rc);
                     }
@@ -188,7 +181,6 @@ public class Simulator {
                 // vecino abajo derecha
                 if(j != M-1 && i != M-1) { // si no es un extremo // i = 9
                     Integer[] neighboursDownRight = matrix[i + 1][j + 1];
-                    System.out.println("vecinos abajo derecha: " + Arrays.toString(neighboursDownRight));
                     if (neighboursDownRight != null) {
                         SearchNeighbours(neighboursDownRight, currentIds, cim, rc);
                     }
@@ -197,7 +189,6 @@ public class Simulator {
                 // vecino arriba izquierda
                 if(i != 0 && j != 0) { //si no es la primer fila
                     Integer[] neighboursUpLeft = matrix[i - 1][j - 1];
-                    System.out.println("vecinos arriba izquierda: " + Arrays.toString(neighboursUpLeft));
                     if (neighboursUpLeft != null) {
                         SearchNeighbours(neighboursUpLeft, currentIds, cim, rc);
                     }
@@ -207,7 +198,6 @@ public class Simulator {
                 if(i != 0) { // si no es la primera fila
                     if (j < M - 1) { //si no es extremo
                         Integer[] neighboursUpRight = matrix[i - 1][j + 1];
-                        System.out.println("vecinos arriba derecha: " + Arrays.toString(neighboursUpRight));
                         if (neighboursUpRight != null) {
                             SearchNeighbours(neighboursUpRight, currentIds, cim, rc);
                         }
@@ -220,7 +210,6 @@ public class Simulator {
                     // arriba izquierda
                     if(j != 0) { //i != 0 && i != M-1 ||
                         Integer[] neighboursUpLeft = matrix[aux_i][j - 1];
-                        System.out.println("periodic vecinos arriba izquierda: " + Arrays.toString(neighboursUpLeft));
                         if (neighboursUpLeft != null) {
                             SearchNeighbours(neighboursUpLeft, currentIds, cim, rc);
                         }
@@ -228,7 +217,6 @@ public class Simulator {
 
                     // arriba
                     Integer[] neighboursUp = matrix[aux_i][j];
-                    System.out.println("periodic vecinos arriba: " + Arrays.toString(neighboursUp));
                     if (neighboursUp != null) {
                         SearchNeighbours(neighboursUp, currentIds, cim, rc);
                     }
@@ -236,7 +224,6 @@ public class Simulator {
                     if(j != M-1) {
                         // arriba derecha
                         Integer[] neighboursUpRight = matrix[aux_i][j + 1];
-                        System.out.println("periodic vecinos arriba derecha: " + Arrays.toString(neighboursUpRight));
                         if (neighboursUpRight != null) {
                             SearchNeighbours(neighboursUpRight, currentIds, cim, rc);
                         }
@@ -249,14 +236,12 @@ public class Simulator {
 
                     //izquierda
                     Integer[] neighboursL = matrix[i][aux_j];
-                    System.out.println("periodic vecinos izquierda: " + Arrays.toString(neighboursL));
                     if(neighboursL != null) {
                         SearchNeighbours(neighboursL, currentIds, cim, rc);
                     }
 
                     //arriba
                     Integer[] neighboursD = matrix[i-1][aux_j];
-                    System.out.println("periodic vecinos arriba: " + Arrays.toString(neighboursD));
                     if(neighboursD != null) {
                         SearchNeighbours(neighboursD, currentIds, cim, rc);
                     }
@@ -264,7 +249,6 @@ public class Simulator {
                     //abajo
                     if(i != M-1) {
                         Integer[] neighbours3 = matrix[i + 1][aux_j];
-                        System.out.println("periodic vecinos abajo: " + Arrays.toString(neighbours3));
                         if (neighbours3 != null) {
                             SearchNeighbours(neighbours3, currentIds, cim, rc);
                         }
@@ -292,17 +276,14 @@ public class Simulator {
                 //extremo esquina abajo izquierda
                 if(periodic && j==0 && i==M-1){
                     Integer[] neighboursAbI3 = matrix[i][M-1];
-                    System.out.println("periodic vecinos izquierda: " + Arrays.toString(neighboursAbI3));
                     if(neighboursAbI3 != null) {
                         SearchNeighbours(neighboursAbI3, currentIds, cim, rc);
                     }
                     Integer[] neighboursAbI4 = matrix[i-1][M-1];
-                    System.out.println("periodic vecinos arriba izquierda: " + Arrays.toString(neighboursAbI4));
                     if(neighboursAbI4 != null) {
                         SearchNeighbours(neighboursAbI4, currentIds, cim, rc);
                     }
                     Integer[] neighboursAbI5 = matrix[0][M-1];
-                    System.out.println("periodic vecinos abajo izquierda: " + Arrays.toString(neighboursAbI5));
                     if(neighboursAbI5 != null) {
                         SearchNeighbours(neighboursAbI5, currentIds, cim, rc);
                     }
@@ -312,17 +293,14 @@ public class Simulator {
                 if(periodic && i==0 && j==M-1){
                     int aux_i = M-1;
                     Integer[] neighboursArD3 = matrix[i][0];
-                    System.out.println("vecino derecha" + Arrays.toString(neighboursArD3));
                     if(neighboursArD3 != null) {
                         SearchNeighbours(neighboursArD3, currentIds, cim, rc);
                     }
                     Integer[] neighboursArD4 = matrix[i+1][0];
-                    System.out.println("vecino derecha abajo" + Arrays.toString(neighboursArD4));
                     if(neighboursArD4 != null) {
                         SearchNeighbours(neighboursArD4, currentIds, cim, rc);
                     }
                     Integer[] neighboursArD5 = matrix[aux_i][0];
-                    System.out.println("vecino arriba derecha" + Arrays.toString(neighboursArD5));
                     if(neighboursArD5 != null) {
                         SearchNeighbours(neighboursArD5, currentIds, cim, rc);
                     }

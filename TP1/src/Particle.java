@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Particle {
 
     private int id;
@@ -10,6 +13,14 @@ public class Particle {
         this.id = id;
         this.radio = radio;
         this.prop = prop;
+    }
+
+    public List<Integer> getNeighbours() {
+        return neighbours;
+    }
+
+    public void setNeighbours(List<Integer> neighbours) {
+        this.neighbours = neighbours;
     }
 
     public int getId() {
@@ -60,6 +71,7 @@ public class Particle {
                 ", prop=" + prop +
                 ", x=" + x +
                 ", y=" + y +
+                ", neighbours=" + neighbours +
                 '}';
     }
 }
