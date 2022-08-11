@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Parser {
 
-    public static void ParseParameters(String static100, String dynamic100, int L, int N, double r_max, ArrayList<Double[]> particlesArray, int time){
+    public static void ParseParameters(String static100, String dynamic100, int L, int N, double r_max, ArrayList<Particle> particlesArray, int time){
         // STATIC
         try {
             File staticFile = new File(static100);
@@ -38,8 +38,10 @@ public class Parser {
                     Simulator.r_max = radio;
                 }
                 double propiedad = Double.parseDouble(dataStatic[1]);
-                Double[] aux = {radio, propiedad};
-                Simulator.particlesArray.add(aux);
+                //Double[] aux = {radio, propiedad};
+               // Simulator.particlesArray.add(aux);
+                Particle particle = new Particle(id,radio,propiedad);
+                Simulator.particlesArray.add(particle);
                 id++;
 
             }
@@ -70,9 +72,12 @@ public class Parser {
                 String[] dataStatic = data.split(" ");
                 double x = Double.parseDouble(dataStatic[0]);
                 double y = Double.parseDouble(dataStatic[1]);
-                Double[] current = particlesArray.get(id);
-                Double[] aux = {current[0], current[1],x,y};
-                particlesArray.set(id,aux);
+                //Double[] current = particlesArray.get(id);
+                //Double[] aux = {current[0], current[1],x,y};
+                //particlesArray.set(id,aux);
+                Particle particle = particlesArray.get(id);
+                particle.setX(x);
+                particle.setY(y);
                 id++;
 
             }

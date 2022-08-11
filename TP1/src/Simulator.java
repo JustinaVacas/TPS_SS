@@ -1,43 +1,34 @@
 import java.io.File;  // Import the File class
-import java.io.FileNotFoundException;  // Import this class to handle errors
+import java.io.IOException;  // Import the IOException class to handle errors
 import java.util.*;
+import java.io.FileWriter;   // Import the FileWriter class
 
 public class Simulator {
 
     public static int N = 0;
     public static int L = 0;
     public static double r_max = 0;
-
     static int time = 0;
 
-    static ArrayList<Double[]> particlesArray = new ArrayList<>();
+    static ArrayList<Particle> particlesArray = new ArrayList<>();
     // radio propiedad x y
 
     public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
         Parser.ParseParameters(args[0], args[1], L, N, r_max, particlesArray, time);
 
-//        for (Double[] particle : particlesArray){
-//            System.out.println("particlesArray: " + Arrays.toString(particle));
-//        }
+        int M = Integer.parseInt(args[2]);
+        int rc = Integer.parseInt(args[3]);
 
-        //calcular M
-        double ancho = Math.sqrt(L);
-
-        int M = 10; //TODO chequear M
-        int rc = 1;
-
-        //L/M > rc  //TODO chequear que se cumpla la condicion
-        //L = 100, M=1, rc + 2*r_max = 1.74
-//        while(L/M > (rc + 2*r_max)){
-//            M++;
-//        }
-//        M = M-1;
-//        System.out.println("M: "+M);
+        if((double) L/M <= (rc + 2*r_max)){
+            System.out.println("Invalid value M: "+M);
+            return;
+        }
 
         Integer[][][] matrix = new Integer[M][M][];
 
         // asignar particulas a celdas segun su ubicacion
-        FillMatrix(particlesArray, matrix, ancho);
+        FillMatrix(particlesArray, matrix, (double) L/M);
 
         // imprimo matrix
         for (Integer[][] integers : matrix) {
@@ -49,21 +40,45 @@ public class Simulator {
 
         //calcular distancias solo entre partículas de celdas vecinas
         Map<Integer, List<Integer>> cim = new HashMap<Integer, List<Integer>>();
-        boolean periodic = true;
+        boolean periodic = Boolean.parseBoolean(args[4]); //true;
         CellIndexMethod(M, rc, cim, matrix, periodic);
 
         System.out.println("mapa final" + cim);
+
+        try {
+            FileWriter myWriter = new FileWriter("output.txt");
+            for (Map.Entry entry: cim.entrySet()) {
+                myWriter.write(entry.getKey() + "\t");
+                System.out.println("cim.values: "+ entry.getValue());
+                List<Integer> aux = (List<Integer>) entry.getValue();
+                for(Integer cur : aux){
+                    myWriter.write(" " + cur);
+                }
+                myWriter.write("\n");
+            }
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println("Execution time: " + elapsedTime + " seconds");
     }
 
     public static void SearchNeighbours(Integer[] neighbours, Integer[] currentIds, Map<Integer, List<Integer>> cim, int rc){
-        for (Integer particleId : neighbours) { //35 29 1 recorremos estos
-            Double[] neighbourParticle = particlesArray.get(particleId);
+        for (Integer particleId : neighbours) {
+            Particle neighbourParticle = particlesArray.get(particleId);
             //System.out.println("particula vecina" + Arrays.toString(neighbourParticle));
-            for (Integer ids : currentIds) { // 2 14
-                Double[] currentParticle = particlesArray.get(ids);
+            for (Integer ids : currentIds) {
+                Particle currentParticle = particlesArray.get(ids);
                 //System.out.println("particula en la celda seleccionada" + Arrays.toString(currentParticle));
-                double distance = Math.sqrt(Math.pow(neighbourParticle[2] - currentParticle[2], 2) + Math.pow(neighbourParticle[3] - currentParticle[3], 2));
-                double edge = distance - neighbourParticle[0] - currentParticle[0];
+                //double distance = Math.sqrt(Math.pow(neighbourParticle[2] - currentParticle[2], 2) + Math.pow(neighbourParticle[3] - currentParticle[3], 2));
+                double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
+                double edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                //double edge = distance - neighbourParticle[0] - currentParticle[0];
                 System.out.println("edge: "+edge);
                 if (edge <= rc) {
                     cim.putIfAbsent(ids, new ArrayList<Integer>());
@@ -74,11 +89,11 @@ public class Simulator {
         }
     }
 
-    public static void FillMatrix(ArrayList<Double[]> particlesArray, Integer[][][] matrix, double ancho){
+    public static void FillMatrix(ArrayList<Particle> particlesArray, Integer[][][] matrix, double ancho){
         int id = 0;
-        for (Double[] doubles : particlesArray){
-            double x = doubles[2];
-            double y = doubles[3];
+        for (Particle particle : particlesArray){
+            double x = particle.getX();
+            double y = particle.getY();
             int row;
             int col ;
 
@@ -95,7 +110,6 @@ public class Simulator {
             else{
                 row = (int) (y / ancho);
             }
-
             Integer[] current = matrix[row][col];
             if(current != null) {
                 Integer[] aux = {id};
@@ -119,7 +133,7 @@ public class Simulator {
 
         for(int i = 0; i < M; i++){
             for(int j = 0; j < M; j++){
-                System.out.println("------------CELDA "+ i + j + "------------");
+                System.out.println("------------CELDA "+ "i: "+i +" j: "+ j + "------------");
                 Integer[] currentIds = matrix[i][j]; // 2 14
                 if(currentIds == null){
                     continue;
