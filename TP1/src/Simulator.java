@@ -8,7 +8,7 @@ public class Simulator {
     public static int L = 0;
     public static double r_max = 0;
     static int time = 0;
-    static boolean bruteForce = false;
+    static boolean bruteForce = true;
 
     static ArrayList<Particle> particlesArray = new ArrayList<>();
     // radio propiedad x y
@@ -147,10 +147,23 @@ public class Simulator {
 
         for(int i = 0; i < M; i++){
             for(int j = 0; j < M; j++){
-                Integer[] currentIds = matrix[i][j]; // 2 14
+                Integer[] currentIds = matrix[i][j];
                 if(currentIds == null){
                     continue;
                 }
+
+                // agrego de vecino a los que estan en la misma celda
+                for (Integer current : currentIds){ // 1
+                    for (Integer ids : currentIds){ // 1 2 3
+                        if(!Objects.equals(ids, current)) {
+                            cim.putIfAbsent(current, new ArrayList<Integer>());
+                            if(!cim.get(current).contains(ids)){
+                                cim.get(current).add(ids);
+                            }
+                        }
+                    }
+                }
+
                 // vecino arriba
                 if( i != 0 ) {  // si no es la primer fila
                     Integer[] neighbours = matrix[i - 1][j];
