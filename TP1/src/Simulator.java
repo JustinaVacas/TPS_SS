@@ -8,6 +8,7 @@ public class Simulator {
     public static int L = 0;
     public static double r_max = 0;
     static int time = 0;
+    static boolean bruteForce = false;
 
     static ArrayList<Particle> particlesArray = new ArrayList<>();
     // radio propiedad x y
@@ -30,7 +31,7 @@ public class Simulator {
         Integer[][][] matrix = new Integer[M][M][];
 
         // asignar particulas a celdas segun su ubicacion
-        FillMatrix(particlesArray, matrix, (double) L/M);
+        FillMatrix(particlesArray, matrix, (double) L/M, M);
 
         // imprimo matrix
         for (Integer[][] integers : matrix) {
@@ -116,7 +117,7 @@ public class Simulator {
         }
     }
 
-    public static void FillMatrix(ArrayList<Particle> particlesArray, Integer[][][] matrix, double ancho){
+    public static void FillMatrix(ArrayList<Particle> particlesArray, Integer[][][] matrix, double ancho, int M){
         int id = 0;
         for (Particle particle : particlesArray){
             double x = particle.getX();
