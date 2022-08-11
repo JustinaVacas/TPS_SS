@@ -16,13 +16,16 @@ public class Simulator {
         long startTime = System.currentTimeMillis();
         Parser.ParseParameters(args[0], args[1], r_max, particlesArray);
 
-        int M = Integer.parseInt(args[2]);
-        int rc = Integer.parseInt(args[3]);
 
-        if((double) L/M <= (rc + 2*r_max)){
-            System.out.println("Invalid value M: "+M);
-            return;
-        }
+        int rc = Integer.parseInt(args[3]);
+        int M = (int) Math.floor(L/(rc + 2*r_max));
+        //int M = Integer.parseInt(args[2]);
+        System.out.println("M optimo: " + M);
+
+//        if((double) L/M <= (rc + 2*r_max)){
+//            System.out.println("Invalid value M: "+M);
+//            return;
+//        }
 
         Integer[][][] matrix = new Integer[M][M][];
 
@@ -49,7 +52,6 @@ public class Simulator {
         for(Map.Entry entry: cim.entrySet()) {
             Particle part = particlesArray.get( (int) entry.getKey());
             part.setNeighbours((List<Integer>) entry.getValue());
-
         }
 
         try {
@@ -72,6 +74,31 @@ public class Simulator {
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
         System.out.println("Execution time: " + elapsedTime + " seconds");
+
+        if(bruteForce) {
+            long startTime2 = System.currentTimeMillis();
+            Map<Integer, List<Integer>> particlesNeighbours = new HashMap<Integer, List<Integer>>();
+            BruteForce(particlesArray,rc,particlesNeighbours);
+            System.out.println("Vecinos " + particlesNeighbours);
+            long stopTime2 = System.currentTimeMillis();
+            long elapsedTime2 = stopTime2 - startTime2;
+            System.out.println("Execution time of brute-force: " + elapsedTime2 + " seconds");
+        }
+    }
+
+    public static void BruteForce(ArrayList<Particle> particlesArray, int rc, Map<Integer, List<Integer>> particlesNeighbours){
+        for (Particle currentParticle: particlesArray) { //1 2 3 4 5 6
+            for(Particle neighbourParticle : particlesArray){
+                if (currentParticle.getId() != neighbourParticle.getId()) {
+                    double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
+                    double edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                    if(edge <= rc){
+                        particlesNeighbours.putIfAbsent(currentParticle.getId(), new ArrayList<Integer>());
+                        particlesNeighbours.get(currentParticle.getId()).add(neighbourParticle.getId());
+                    }
+                }
+            }
+        }
     }
 
     public static void SearchNeighbours(Integer[] neighbours, Integer[] currentIds, Map<Integer, List<Integer>> cim, int rc){
@@ -102,14 +129,23 @@ public class Simulator {
             }
             else {
                 col = (int) (x / ancho);
+//                while(col >= M){
+//                    col = (int) (col / ancho);
+//                }
             }
-
             if( y <= ancho ){
                 row = 0;
             }
             else{
                 row = (int) (y / ancho);
+//                while(row >= M) {
+//                    row = (int) (row / ancho);
+//                }
             }
+//            System.out.println("x: " + x);
+//            System.out.println("y: " + y);
+//            System.out.println("row: " + row);
+//            System.out.println("col: " + col);
             Integer[] current = matrix[row][col];
             if(current != null) {
                 Integer[] aux = {id};
@@ -124,7 +160,6 @@ public class Simulator {
                 Integer[] aux = {id};
                 matrix[row][col] = aux;
             }
-
             id++;
         }
     }
