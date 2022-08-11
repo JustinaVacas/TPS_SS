@@ -124,32 +124,11 @@ public class Simulator {
             double y = particle.getY();
             int row;
             int col ;
-
-            if( x <= ancho ) {
-                col = 0;
-            }
-            else {
-                col = (int) (x / ancho);
-//                while(col >= M){
-//                    col = (int) (col / ancho);
-//                }
-            }
-            if( y <= ancho ){
-                row = 0;
-            }
-            else{
-                row = (int) (y / ancho);
-//                while(row >= M) {
-//                    row = (int) (row / ancho);
-//                }
-            }
-//            System.out.println("x: " + x);
-//            System.out.println("y: " + y);
-//            System.out.println("row: " + row);
-//            System.out.println("col: " + col);
+            row = (int) Math.floor(y / ancho);
+            col = (int) Math.floor(x / ancho);
             Integer[] current = matrix[row][col];
+            Integer[] aux = {id};
             if(current != null) {
-                Integer[] aux = {id};
                 int aLen = current.length;
                 int bLen = aux.length;
                 Integer[] result = new Integer[aLen + bLen];
@@ -158,7 +137,6 @@ public class Simulator {
                 matrix[row][col] = result;
             }
             else {
-                Integer[] aux = {id};
                 matrix[row][col] = aux;
             }
             id++;

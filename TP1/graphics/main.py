@@ -22,10 +22,10 @@ def draw(particles, neighbours, id):
 
 
 def parseParameters():
-    with open('utils/Dynamic100.txt') as dynamicFile:
+    with open('Dynamic100.txt') as dynamicFile:
         dynamicLines = dynamicFile.readlines()[1:]
 
-    with open('utils/output.txt') as outputFile:
+    with open('output.txt') as outputFile:
         outputLines = outputFile.readlines()
 
     neighbours = []
