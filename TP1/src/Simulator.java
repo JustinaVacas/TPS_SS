@@ -13,10 +13,9 @@ public class Simulator {
     static ArrayList<Particle> particlesArray = new ArrayList<>();
     // radio propiedad x y
 
-    public static void main(String[] args) {
-        long startTime = System.currentTimeMillis();
+    public static void main(String[] args) throws IOException {
         Parser.ParseParameters(args[0], args[1], r_max, particlesArray);
-
+        long startTime = System.currentTimeMillis();
 
         int rc = Integer.parseInt(args[3]);
         int M = (int) Math.floor(L/(rc + 2*r_max));
@@ -74,7 +73,7 @@ public class Simulator {
 
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
-        System.out.println("Execution time: " + elapsedTime + " seconds");
+        System.out.println("Execution time: " + elapsedTime + " milliseconds");
 
         if(bruteForce) {
             long startTime2 = System.currentTimeMillis();
@@ -83,7 +82,7 @@ public class Simulator {
             System.out.println("Vecinos " + particlesNeighbours);
             long stopTime2 = System.currentTimeMillis();
             long elapsedTime2 = stopTime2 - startTime2;
-            System.out.println("Execution time of brute-force: " + elapsedTime2 + " seconds");
+            System.out.println("Execution time of brute-force: " + elapsedTime2 + " milliseconds");
         }
     }
 
@@ -117,12 +116,78 @@ public class Simulator {
         }
     }
 
+    public static void SearchNeighboursPeriodic(Integer[] neighbours, Integer[] currentIds, Map<Integer, List<Integer>> cim, int rc, int num,int id){
+        for (Integer particleId : neighbours) {
+            Particle neighbourParticle = particlesArray.get(particleId);
+            for (Integer ids : currentIds) {
+                Particle currentParticle = particlesArray.get(ids);
+                double edge = 0;
+                if(id==4 && num==1){
+                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()+L) - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()+L) - currentParticle.getY(), 2));
+                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                }
+                if(id==4 && (num==5 || num==3)){
+                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()+L) - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
+                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                }
+                if( id == 4 && num == 2){
+                    double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()+L) - currentParticle.getY(), 2));
+                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                }
+                if(id == 3 && (num == 4 || num == 6)){
+                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()-L) - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
+                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                }
+                if(id == 3 && num == 2){
+                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()-L)- currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()+L) - currentParticle.getY(), 2));
+                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                }
+                if(id == 3 && num == 1){
+                    double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()+L) - currentParticle.getY(), 2));
+                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                }
+                if(id == 2 && (num == 1 || num == 5)){
+                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()+L) - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
+                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                    if(currentParticle.getId() == 28) {
+                        System.out.println("soy el vecino " + neighbourParticle.getId() + " de " + currentParticle.getId() + " edge " + edge);
+                    }
+                }
+                if(id == 2 && num == 3){
+                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()+L) - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()-L) - currentParticle.getY(), 2));
+                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                }
+                if(id == 2 && num == 4){
+                    double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()-L) - currentParticle.getY(), 2));
+                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                }
+                if(id == 1 && (num == 2 || num == 6)){
+                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()-L) - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
+                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                }
+                if(id == 1 && num == 4){
+                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()-L) - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()-L) - currentParticle.getY(), 2));
+                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                }
+                if(id == 1 && num == 3){
+                    double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()-L) - currentParticle.getY(), 2));
+                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+                }
+                if (edge <= rc) {
+                    cim.putIfAbsent(ids, new ArrayList<Integer>());
+                    if(!cim.get(ids).contains(particleId)) {
+                        cim.get(ids).add(particleId);
+                    }
+                }
+            }
+        }
+    }
+
     public static void FillMatrix(ArrayList<Particle> particlesArray, Integer[][][] matrix, double ancho, int M){
         int id = 0;
         for (Particle particle : particlesArray){
             double x = particle.getX();
             double y = particle.getY();
-            System.out.println("x: " + x + "y: " + y);
             int row;
             int col ;
             row = (int) Math.floor(y / ancho);
@@ -146,8 +211,8 @@ public class Simulator {
 
     public static void CellIndexMethod(int M, int rc, Map<Integer, List<Integer>> cim, Integer[][][] matrix, boolean periodic){
 
-        for(int i = 0; i < M; i++){
-            for(int j = 0; j < M; j++){
+        for(int i = 0; i < M; i++){ //fila
+            for(int j = 0; j < M; j++){ //columna
                 Integer[] currentIds = matrix[i][j];
                 if(currentIds == null){
                     continue;
@@ -233,10 +298,10 @@ public class Simulator {
 
                 // si es la primera fila o la ultima && condiciones periodicas
                 if(periodic && (i == 0 || i == M-1)){
-                    int aux_i = (i == 0)? M-1 : 0;
+                    int aux_i = (i == 0)? (M-1) : 0;
                     // arriba izquierda
                     if(j != 0) { //i != 0 && i != M-1 ||
-                        Integer[] neighboursUpLeft = matrix[aux_i][j - 1];
+                        Integer[] neighboursUpLeft = matrix[aux_i][j-1];
                         if (neighboursUpLeft != null) {
                             SearchNeighbours(neighboursUpLeft, currentIds, cim, rc);
                         }
@@ -245,14 +310,24 @@ public class Simulator {
                     // arriba
                     Integer[] neighboursUp = matrix[aux_i][j];
                     if (neighboursUp != null) {
-                        SearchNeighbours(neighboursUp, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighboursUp, currentIds, cim, rc,2,4);
+                        if(i==M-1 && j==M-1){
+                            SearchNeighboursPeriodic(neighboursUp, currentIds, cim, rc,1,3);
+                        }
+                        if((i==0 && j==M-1) || (i==0 && j<M-1 && j!=0)){
+                            SearchNeighboursPeriodic(neighboursUp, currentIds, cim, rc,4,2);
+                        }
+                        if(i==0 && j==0){
+                            SearchNeighboursPeriodic(neighboursUp, currentIds, cim, rc,3,1);
+                        }
                     }
 
+                    // arriba derecha
                     if(j != M-1) {
-                        // arriba derecha
                         Integer[] neighboursUpRight = matrix[aux_i][j + 1];
                         if (neighboursUpRight != null) {
                             SearchNeighbours(neighboursUpRight, currentIds, cim, rc);
+                            SearchNeighboursPeriodic(neighboursUpRight,currentIds,cim,rc,1,3);
                         }
                     }
                 }
@@ -265,6 +340,9 @@ public class Simulator {
                     Integer[] neighboursL = matrix[i][aux_j];
                     if(neighboursL != null) {
                         SearchNeighbours(neighboursL, currentIds, cim, rc);
+                        if(i<M-1 && j==M-1){
+                            SearchNeighboursPeriodic(neighboursL, currentIds, cim, rc,3,4);
+                        }
                     }
 
                     //arriba
@@ -278,6 +356,9 @@ public class Simulator {
                         Integer[] neighbours3 = matrix[i + 1][aux_j];
                         if (neighbours3 != null) {
                             SearchNeighbours(neighbours3, currentIds, cim, rc);
+                            if(j==M-1){
+                                SearchNeighboursPeriodic(neighbours3, currentIds, cim, rc,1,2);
+                            }
                         }
                     }
                 }
@@ -288,15 +369,15 @@ public class Simulator {
                     int aux_i = M-1;
                     Integer[] neighbours3 = matrix[i][aux_j];
                     if(neighbours3 != null) {
-                        SearchNeighbours(neighbours3, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighbours3, currentIds, cim, rc,2,1);
                     }
                     Integer[] neighbours4 = matrix[i+1][aux_j];
                     if(neighbours4 != null) {
-                        SearchNeighbours(neighbours4, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighbours4, currentIds, cim, rc,6,1);
                     }
                     Integer[] neighbours5 = matrix[aux_i][aux_j];
                     if(neighbours5 != null) {
-                        SearchNeighbours(neighbours5, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighbours5, currentIds, cim, rc,4,1);
                     }
                 }
 
@@ -304,15 +385,15 @@ public class Simulator {
                 if(periodic && j==0 && i==M-1){
                     Integer[] neighboursAbI3 = matrix[i][M-1];
                     if(neighboursAbI3 != null) {
-                        SearchNeighbours(neighboursAbI3, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighboursAbI3, currentIds, cim, rc,4,3);
                     }
                     Integer[] neighboursAbI4 = matrix[i-1][M-1];
                     if(neighboursAbI4 != null) {
-                        SearchNeighbours(neighboursAbI4, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighboursAbI4, currentIds, cim, rc,6,3);
                     }
                     Integer[] neighboursAbI5 = matrix[0][M-1];
                     if(neighboursAbI5 != null) {
-                        SearchNeighbours(neighboursAbI5, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighboursAbI5, currentIds, cim, rc,2,3);
                     }
                 }
 
@@ -321,30 +402,31 @@ public class Simulator {
                     int aux_i = M-1;
                     Integer[] neighboursArD3 = matrix[i][0];
                     if(neighboursArD3 != null) {
-                        SearchNeighbours(neighboursArD3, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighboursArD3, currentIds, cim, rc,1,2);
                     }
-                    Integer[] neighboursArD4 = matrix[i+1][0];
+                    Integer[] neighboursArD4 = matrix[1][0];
                     if(neighboursArD4 != null) {
-                        SearchNeighbours(neighboursArD4, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighboursArD4, currentIds, cim, rc,5,2);
                     }
                     Integer[] neighboursArD5 = matrix[aux_i][0];
                     if(neighboursArD5 != null) {
-                        SearchNeighbours(neighboursArD5, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighboursArD5, currentIds, cim, rc,3,2);
                     }
                 }
+
                 //extremo esquina abajo derecha
                 if(periodic && i==M-1 && j==M-1){
                     Integer[] neighboursAbD3 = matrix[i][0];
                     if(neighboursAbD3 != null) {
-                        SearchNeighbours(neighboursAbD3, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighboursAbD3, currentIds, cim, rc,3,4);
                     }
-                    Integer[] neighboursAbD4 = matrix[i-1][j-1];
+                    Integer[] neighboursAbD4 = matrix[i-1][0];
                     if(neighboursAbD4 != null) {
-                        SearchNeighbours(neighboursAbD4, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighboursAbD4, currentIds, cim, rc,5,4);
                     }
                     Integer[] neighboursAbD5 = matrix[0][0];
                     if(neighboursAbD5 != null) {
-                        SearchNeighbours(neighboursAbD5, currentIds, cim, rc);
+                        SearchNeighboursPeriodic(neighboursAbD5, currentIds, cim, rc,1,4);
                     }
                 }
             }
