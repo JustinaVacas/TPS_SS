@@ -31,11 +31,15 @@ def parseParameters():
     neighbours = []
     for line in outputLines:
         newline = line.strip()
-        split = newline.split("\t ")
+        split = newline.split("\t")
+        newsplit = split[1].strip().split(" ")
+        neighbour = [split[0]]
+        for n in newsplit:
+            neighbour.append(n)
         count = 0
         array = []
-        for n in split:
-            array.append(int(split[count]))
+        for n in neighbour:
+            array.append(int(neighbour[count]))
             count += 1
         neighbours.append(array)
     # print(neighbours)
