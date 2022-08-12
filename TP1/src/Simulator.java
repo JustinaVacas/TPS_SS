@@ -122,6 +122,7 @@ public class Simulator {
         for (Particle particle : particlesArray){
             double x = particle.getX();
             double y = particle.getY();
+            System.out.println("x: " + x + "y: " + y);
             int row;
             int col ;
             row = (int) Math.floor(y / ancho);
