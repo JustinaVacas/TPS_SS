@@ -25,7 +25,7 @@ def parseParameters(file, output):
     with open(file) as dynamicFile:
         dynamicLines = dynamicFile.readlines()[1:]
 
-    with open('output.txt') as outputFile:
+    with open(output) as outputFile:
         outputLines = outputFile.readlines()
 
     neighbours = []

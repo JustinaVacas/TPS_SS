@@ -46,7 +46,7 @@ public class Simulator {
         CellIndexMethod(M, rc, cim, matrix, periodic);
 
         System.out.println();
-        System.out.println("Vecinos finales " + cim);
+        System.out.println("Vecinos CIM " + cim);
 
         // asigno los vecinos a cada instancia
         for(Map.Entry entry: cim.entrySet()) {
@@ -92,8 +92,8 @@ public class Simulator {
     }
 
     public static void BruteForce(ArrayList<Particle> particlesArray, int rc, Map<Integer, List<Integer>> particlesNeighbours){
-        for (Particle currentParticle: particlesArray) { //1 2 3 4 5 6
-            for(Particle neighbourParticle : particlesArray){
+        for (Particle currentParticle: particlesArray) { //[1 2] 3 4 5 6
+            for(Particle neighbourParticle : particlesArray){ //1 2 3 4
                 if (currentParticle.getId() != neighbourParticle.getId()) {
                     double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
                     double edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
@@ -137,7 +137,7 @@ public class Simulator {
         }
     }
 
-    public static void SearchNeighboursPeriodic(Integer[] neighbours, Integer[] currentIds, Map<Integer, List<Integer>> cim, int rc, int num,int id){
+    public static void SearchNeighboursPeriodic(Integer[] neighbours, Integer[] currentIds, Map<Integer, List<Integer>> cim, int rc){
         for (Integer particleId : neighbours) {
             Particle neighbourParticle = particlesArray.get(particleId);
             for (Integer ids : currentIds) {
@@ -280,15 +280,15 @@ public class Simulator {
                     // arriba
                     Integer[] neighboursUp = matrix[aux_i][j];
                     if (neighboursUp != null) {
-                        SearchNeighboursPeriodic(neighboursUp, currentIds, cim, rc,2,4);
+                        SearchNeighboursPeriodic(neighboursUp, currentIds, cim, rc);
                         if(i==M-1 && j==M-1){
-                            SearchNeighboursPeriodic(neighboursUp, currentIds, cim, rc,1,3);
+                            SearchNeighboursPeriodic(neighboursUp, currentIds, cim, rc);
                         }
                         if((i==0 && j==M-1) || (i==0 && j<M-1 && j!=0)){
-                            SearchNeighboursPeriodic(neighboursUp, currentIds, cim, rc,4,2);
+                            SearchNeighboursPeriodic(neighboursUp, currentIds, cim, rc);
                         }
                         if(i==0 && j==0){
-                            SearchNeighboursPeriodic(neighboursUp, currentIds, cim, rc,3,1);
+                            SearchNeighboursPeriodic(neighboursUp, currentIds, cim, rc);
                         }
                     }
 
@@ -297,7 +297,7 @@ public class Simulator {
                         Integer[] neighboursUpRight = matrix[aux_i][j + 1];
                         if (neighboursUpRight != null) {
                             SearchNeighbours(neighboursUpRight, currentIds, cim, rc);
-                            SearchNeighboursPeriodic(neighboursUpRight,currentIds,cim,rc,1,3);
+                            SearchNeighboursPeriodic(neighboursUpRight,currentIds,cim,rc);
                         }
                     }
                 }
@@ -327,7 +327,7 @@ public class Simulator {
                         if (neighbours3 != null) {
                             SearchNeighbours(neighbours3, currentIds, cim, rc);
                             if(j==M-1){
-                                SearchNeighboursPeriodic(neighbours3, currentIds, cim, rc,1,2);
+                                SearchNeighboursPeriodic(neighbours3, currentIds, cim, rc);
                             }
                         }
                     }
@@ -339,15 +339,15 @@ public class Simulator {
                     int aux_i = M-1;
                     Integer[] neighbours3 = matrix[i][aux_j];
                     if(neighbours3 != null) {
-                        SearchNeighboursPeriodic(neighbours3, currentIds, cim, rc,2,1);
+                        SearchNeighboursPeriodic(neighbours3, currentIds, cim, rc);
                     }
                     Integer[] neighbours4 = matrix[i+1][aux_j];
                     if(neighbours4 != null) {
-                        SearchNeighboursPeriodic(neighbours4, currentIds, cim, rc,6,1);
+                        SearchNeighboursPeriodic(neighbours4, currentIds, cim, rc);
                     }
                     Integer[] neighbours5 = matrix[aux_i][aux_j];
                     if(neighbours5 != null) {
-                        SearchNeighboursPeriodic(neighbours5, currentIds, cim, rc,4,1);
+                        SearchNeighboursPeriodic(neighbours5, currentIds, cim, rc);
                     }
                 }
 
@@ -355,15 +355,15 @@ public class Simulator {
                 if(periodic && j==0 && i==M-1){
                     Integer[] neighboursAbI3 = matrix[i][M-1];
                     if(neighboursAbI3 != null) {
-                        SearchNeighboursPeriodic(neighboursAbI3, currentIds, cim, rc,4,3);
+                        SearchNeighboursPeriodic(neighboursAbI3, currentIds, cim, rc);
                     }
                     Integer[] neighboursAbI4 = matrix[i-1][M-1];
                     if(neighboursAbI4 != null) {
-                        SearchNeighboursPeriodic(neighboursAbI4, currentIds, cim, rc,6,3);
+                        SearchNeighboursPeriodic(neighboursAbI4, currentIds, cim, rc);
                     }
                     Integer[] neighboursAbI5 = matrix[0][M-1];
                     if(neighboursAbI5 != null) {
-                        SearchNeighboursPeriodic(neighboursAbI5, currentIds, cim, rc,2,3);
+                        SearchNeighboursPeriodic(neighboursAbI5, currentIds, cim, rc);
                     }
                 }
 
@@ -372,15 +372,15 @@ public class Simulator {
                     int aux_i = M-1;
                     Integer[] neighboursArD3 = matrix[i][0];
                     if(neighboursArD3 != null) {
-                        SearchNeighboursPeriodic(neighboursArD3, currentIds, cim, rc,1,2);
+                        SearchNeighboursPeriodic(neighboursArD3, currentIds, cim, rc);
                     }
                     Integer[] neighboursArD4 = matrix[1][0];
                     if(neighboursArD4 != null) {
-                        SearchNeighboursPeriodic(neighboursArD4, currentIds, cim, rc,5,2);
+                        SearchNeighboursPeriodic(neighboursArD4, currentIds, cim, rc);
                     }
                     Integer[] neighboursArD5 = matrix[aux_i][0];
                     if(neighboursArD5 != null) {
-                        SearchNeighboursPeriodic(neighboursArD5, currentIds, cim, rc,3,2);
+                        SearchNeighboursPeriodic(neighboursArD5, currentIds, cim, rc);
                     }
                 }
 
@@ -388,15 +388,15 @@ public class Simulator {
                 if(periodic && i==M-1 && j==M-1){
                     Integer[] neighboursAbD3 = matrix[i][0];
                     if(neighboursAbD3 != null) {
-                        SearchNeighboursPeriodic(neighboursAbD3, currentIds, cim, rc,3,4);
+                        SearchNeighboursPeriodic(neighboursAbD3, currentIds, cim, rc);
                     }
                     Integer[] neighboursAbD4 = matrix[i-1][0];
                     if(neighboursAbD4 != null) {
-                        SearchNeighboursPeriodic(neighboursAbD4, currentIds, cim, rc,5,4);
+                        SearchNeighboursPeriodic(neighboursAbD4, currentIds, cim, rc);
                     }
                     Integer[] neighboursAbD5 = matrix[0][0];
                     if(neighboursAbD5 != null) {
-                        SearchNeighboursPeriodic(neighboursAbD5, currentIds, cim, rc,1,4);
+                        SearchNeighboursPeriodic(neighboursAbD5, currentIds, cim, rc);
                     }
                 }
             }
