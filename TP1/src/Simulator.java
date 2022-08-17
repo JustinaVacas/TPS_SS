@@ -78,8 +78,13 @@ public class Simulator {
         if(bruteForce) {
             long startTime2 = System.currentTimeMillis();
             Map<Integer, List<Integer>> particlesNeighbours = new HashMap<Integer, List<Integer>>();
-            BruteForce(particlesArray,rc,particlesNeighbours);
-            System.out.println("Vecinos " + particlesNeighbours);
+            if(periodic){
+                BruteForcePeriodic(particlesArray,rc,particlesNeighbours, L);
+            }
+            else {
+                BruteForce(particlesArray, rc, particlesNeighbours);
+            }
+            System.out.println("Vecinos fuerza bruta" + particlesNeighbours);
             long stopTime2 = System.currentTimeMillis();
             long elapsedTime2 = stopTime2 - startTime2;
             System.out.println("Execution time of brute-force: " + elapsedTime2 + " milliseconds");
@@ -101,6 +106,20 @@ public class Simulator {
         }
     }
 
+    public static void BruteForcePeriodic(ArrayList<Particle> particlesArray, int rc, Map<Integer, List<Integer>> particlesNeighbours, int L){
+        for (Particle currentParticle: particlesArray) { //1 2 3 4 5 6
+            for(Particle neighbourParticle : particlesArray){
+                if (currentParticle.getId() != neighbourParticle.getId()) {
+                    double edge = GetEdge(neighbourParticle, currentParticle);
+                    if(edge <= rc){
+                        particlesNeighbours.putIfAbsent(currentParticle.getId(), new ArrayList<Integer>());
+                        particlesNeighbours.get(currentParticle.getId()).add(neighbourParticle.getId());
+                    }
+                }
+            }
+        }
+    }
+
     public static void SearchNeighbours(Integer[] neighbours, Integer[] currentIds, Map<Integer, List<Integer>> cim, int rc){
         for (Integer particleId : neighbours) {
             Particle neighbourParticle = particlesArray.get(particleId);
@@ -109,8 +128,10 @@ public class Simulator {
                 double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
                 double edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
                 if (edge <= rc) {
-                    cim.putIfAbsent(ids, new ArrayList<Integer>());
-                    cim.get(ids).add(particleId);
+                    if(!ids.equals(particleId)) {
+                        cim.putIfAbsent(ids, new ArrayList<Integer>());
+                        cim.get(ids).add(particleId);
+                    }
                 }
             }
         }
@@ -121,58 +142,7 @@ public class Simulator {
             Particle neighbourParticle = particlesArray.get(particleId);
             for (Integer ids : currentIds) {
                 Particle currentParticle = particlesArray.get(ids);
-                double edge = 0;
-                if(id==4 && num==1){
-                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()+L) - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()+L) - currentParticle.getY(), 2));
-                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                }
-                if(id==4 && (num==5 || num==3)){
-                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()+L) - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
-                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                }
-                if( id == 4 && num == 2){
-                    double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()+L) - currentParticle.getY(), 2));
-                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                }
-                if(id == 3 && (num == 4 || num == 6)){
-                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()-L) - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
-                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                }
-                if(id == 3 && num == 2){
-                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()-L)- currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()+L) - currentParticle.getY(), 2));
-                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                }
-                if(id == 3 && num == 1){
-                    double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()+L) - currentParticle.getY(), 2));
-                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                }
-                if(id == 2 && (num == 1 || num == 5)){
-                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()+L) - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
-                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                    if(currentParticle.getId() == 28) {
-                        System.out.println("soy el vecino " + neighbourParticle.getId() + " de " + currentParticle.getId() + " edge " + edge);
-                    }
-                }
-                if(id == 2 && num == 3){
-                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()+L) - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()-L) - currentParticle.getY(), 2));
-                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                }
-                if(id == 2 && num == 4){
-                    double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()-L) - currentParticle.getY(), 2));
-                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                }
-                if(id == 1 && (num == 2 || num == 6)){
-                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()-L) - currentParticle.getX(), 2) + Math.pow(neighbourParticle.getY() - currentParticle.getY(), 2));
-                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                }
-                if(id == 1 && num == 4){
-                    double distance = Math.sqrt(Math.pow((neighbourParticle.getX()-L) - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()-L) - currentParticle.getY(), 2));
-                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                }
-                if(id == 1 && num == 3){
-                    double distance = Math.sqrt(Math.pow(neighbourParticle.getX() - currentParticle.getX(), 2) + Math.pow((neighbourParticle.getY()-L) - currentParticle.getY(), 2));
-                    edge = distance - neighbourParticle.getRadio() - currentParticle.getRadio();
-                }
+                double edge = GetEdge(neighbourParticle, currentParticle);
                 if (edge <= rc) {
                     cim.putIfAbsent(ids, new ArrayList<Integer>());
                     if(!cim.get(ids).contains(particleId)) {
@@ -181,6 +151,15 @@ public class Simulator {
                 }
             }
         }
+    }
+
+    public static double GetEdge(Particle neighbourParticle,Particle currentParticle){
+        double auxX = Math.abs(neighbourParticle.getX() - currentParticle.getX());
+        double X = Double.min(auxX, L - auxX);
+        final double auxY = Math.abs(neighbourParticle.getY() - currentParticle.getY());
+        final double Y = Double.min(auxY, L - auxY);
+        double distance = Math.sqrt(Math.pow(X, 2) + Math.pow(Y, 2));
+        return distance - neighbourParticle.getRadio() - currentParticle.getRadio();
     }
 
     public static void FillMatrix(ArrayList<Particle> particlesArray, Integer[][][] matrix, double ancho, int M){
@@ -218,17 +197,8 @@ public class Simulator {
                     continue;
                 }
 
-                // agrego de vecino a los que estan en la misma celda
-                for (Integer current : currentIds){ // 1
-                    for (Integer ids : currentIds){ // 1 2 3
-                        if(!Objects.equals(ids, current)) {
-                            cim.putIfAbsent(current, new ArrayList<Integer>());
-                            if(!cim.get(current).contains(ids)){
-                                cim.get(current).add(ids);
-                            }
-                        }
-                    }
-                }
+                // agrego de vecino a los que estan en la misma celda que cumplen con la condicion
+                SearchNeighbours(currentIds, currentIds, cim, rc);
 
                 // vecino arriba
                 if( i != 0 ) {  // si no es la primer fila
@@ -340,8 +310,8 @@ public class Simulator {
                     Integer[] neighboursL = matrix[i][aux_j];
                     if(neighboursL != null) {
                         SearchNeighbours(neighboursL, currentIds, cim, rc);
-                        if(i<M-1 && j==M-1){
-                            SearchNeighboursPeriodic(neighboursL, currentIds, cim, rc,3,4);
+                        if(i<(M-1) && (j==M-1 || j==0)){
+                            SearchNeighboursPeriodic(neighboursL, currentIds, cim, rc);
                         }
                     }
 

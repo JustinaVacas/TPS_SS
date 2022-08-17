@@ -21,8 +21,8 @@ def draw(particles, neighbours, id):
     plt.show()
 
 
-def parseParameters():
-    with open('dynamic.txt') as dynamicFile:
+def parseParameters(file, output):
+    with open(file) as dynamicFile:
         dynamicLines = dynamicFile.readlines()[1:]
 
     with open('output.txt') as outputFile:
@@ -55,5 +55,5 @@ def parseParameters():
 
 
 if __name__ == '__main__':
-    particles, neighbours = parseParameters()
-    draw(particles, neighbours, sys.argv[1])
+    particles, neighbours = parseParameters(sys.argv[1], sys.argv[2])
+    draw(particles, neighbours, sys.argv[3])
