@@ -9,6 +9,7 @@ public class Particle {
     private double angle;
     private double x;
     private double y;
+    //TODO cambiar a una lista de particulas
     private List<Integer> neighbours;
 
     public Particle(int id, double radio, double v, double angle) {
