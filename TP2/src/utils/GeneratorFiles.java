@@ -2,6 +2,7 @@ package utils;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 
 public class GeneratorFiles {
@@ -38,6 +39,20 @@ public class GeneratorFiles {
                 double velocity = v;
                 double angle = random.nextDouble() * (2 * Math.PI);
                 myWriter.write("   " + ratio + "   " + velocity + "   " + angle + "\n");
+            }
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void output(List<Double> orders){
+        try {
+            FileWriter myWriter = new FileWriter("./orders.txt");
+            for (Double order: orders) {
+                myWriter.write(String.valueOf(order)+'\n');
             }
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
