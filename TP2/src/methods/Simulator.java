@@ -1,3 +1,5 @@
+package methods;
+
 import utils.GeneratorFiles;
 
 import java.io.IOException;
@@ -53,10 +55,14 @@ public class Simulator {
         List<Double> orders = OffLatice(M, rc, cim, matrix, periodic, dt, L);
 
         GeneratorFiles.output(orders);
-    //public static List<ArrayList<Particle>> frames = new ArrayList<>();
-//        for(ArrayList<Particle> particles : frames){
+
+        GeneratorFiles.outputFrames(frames);
+
+
+    //public static List<ArrayList<methods.Particle>> frames = new ArrayList<>();
+//        for(ArrayList<methods.Particle> particles : frames){
 //            System.out.println("frame ------------------------------ ");
-//            for(Particle particle : particles){;
+//            for(methods.Particle particle : particles){;
 //                System.out.println(particle);
 //            }
 //        }
@@ -70,7 +76,15 @@ public class Simulator {
         while (iter < max) {
 
             //guardamos el frame
-            frames.add(birdsArray);
+            for (Particle particle: birdsArray) {
+                ArrayList<Double> state = new ArrayList<Double>();
+                state.add((double) particle.getId());
+                state.add(particle.getX());
+                state.add(particle.getY());
+                state.add(particle.getAngle());
+                state.add(particle.getV());
+                frames.add(state);
+            }
 
             //agregar order
             order.add(GenerateOrder());

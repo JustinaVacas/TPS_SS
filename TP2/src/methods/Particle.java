@@ -1,3 +1,5 @@
+package methods;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +80,7 @@ public class Particle {
 
     @Override
     public String toString() {
-        return "Particle{" +
+        return "methods.Particle{" +
                 "id= " + id +
                 ", radio= " + radio +
                 ", v= " + v +
