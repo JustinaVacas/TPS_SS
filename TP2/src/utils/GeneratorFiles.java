@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import static java.lang.Math.*;
 
 public class GeneratorFiles {
 
@@ -56,6 +57,32 @@ public class GeneratorFiles {
             FileWriter myWriter = new FileWriter("./orders.txt");
             for (Double order: orders) {
                 myWriter.write(String.valueOf(order)+'\n');
+            }
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void outputFrames(List<ArrayList<Double>> frames){
+        try {
+            FileWriter myWriter = new FileWriter("./frames.txt");
+            int frameNum = 0;
+            int count = 0;
+            for (ArrayList<Double> frame : frames) {
+                if(count == 0 || count == 300){
+                    myWriter.write(String.valueOf(N)+'\n');
+                    myWriter.write(String.valueOf(frameNum)+'\n');
+                    frameNum++;
+                    count = 0;
+                }
+                double vx = cos(frame.get(3)) * frame.get(4);
+                double vy = sin(frame.get(3)) * frame.get(4);
+                myWriter.write(frame.get(0) + "\t" + frame.get(1) + "\t" + frame.get(2)  + "\t" + "0.0" + "\t" + vx + "\t" + vy + "\n");
+                count++;
+
             }
             myWriter.close();
             System.out.println("Successfully wrote to the file.");

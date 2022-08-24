@@ -16,7 +16,7 @@ public class Simulator {
     static int time = 0;
 
     public static ArrayList<Particle> birdsArray = new ArrayList<>();
-    public static List<ArrayList<Particle>> frames = new ArrayList<>();
+    public static List<ArrayList<Double>> frames = new ArrayList<>();
     // radio velocidad x y
 
     public static void main(String[] args) throws IOException {
