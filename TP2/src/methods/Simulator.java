@@ -39,6 +39,8 @@ public class Simulator {
 
         Integer[][][] matrix = new Integer[M][M][];
 
+        long startTime = System.currentTimeMillis();
+
         // asignar particulas a celdas segun su ubicacion
         CIM.FillMatrix(birdsArray, matrix, (double) L/M, M);
 
@@ -58,22 +60,19 @@ public class Simulator {
 
         GeneratorFiles.outputFrames(frames);
 
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println("Execution time: " + elapsedTime + " milliseconds");
 
-    //public static List<ArrayList<methods.Particle>> frames = new ArrayList<>();
-//        for(ArrayList<methods.Particle> particles : frames){
-//            System.out.println("frame ------------------------------ ");
-//            for(methods.Particle particle : particles){;
-//                System.out.println(particle);
-//            }
-//        }
     }
 
     public static List<Double> OffLatice(int M, int rc, Map<Integer,List<Integer>> cim, Integer[][][] matrix, boolean periodic, double dt, int L){
         int iter = 0;
-        int max = 40;
+        int max = 100;
         //lista de double de los orders
         List<Double> order = new ArrayList<>();
         while (iter < max) {
+            System.out.println(iter);
 
             //guardamos el frame
             for (Particle particle: birdsArray) {
@@ -83,6 +82,7 @@ public class Simulator {
                 state.add(particle.getY());
                 state.add(particle.getAngle());
                 state.add(particle.getV());
+                state.add(particle.getRadio());
                 frames.add(state);
             }
 

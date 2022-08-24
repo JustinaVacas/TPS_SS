@@ -29,9 +29,9 @@ def parseParameters(file):
         newline = line.strip()
         birds.append(float(newline))
 
-    return birds
+    return birds, len(birds)
 
 
 if __name__ == '__main__':
-    birds = parseParameters(sys.argv[1])
-    draw(birds, 40, 2.0, 300, 7, 1)
+    birds, iterations = parseParameters(sys.argv[1])
+    draw(birds, iterations, 2.0, 300, 7, 1)

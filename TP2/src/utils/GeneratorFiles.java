@@ -1,13 +1,10 @@
 package utils;
 
-import methods.Particle;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import static java.lang.Math.*;
 
 public class GeneratorFiles {
 
@@ -26,7 +23,7 @@ public class GeneratorFiles {
                 myWriter.write("   " + randomX + "   " + randomY + "\n");
             }
             myWriter.close();
-            System.out.println("Successfully wrote to the file.");
+            System.out.println("Successfully wrote dynamic.txt");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -39,13 +36,13 @@ public class GeneratorFiles {
             myWriter.write("   " + L + "\n");
             myWriter.write("   " + n + "\n");
             for(int i = 0; i < N; i++){
-                double ratio = 1.000;
+                double ratio = 0.1;
                 double velocity = v;
                 double angle = random.nextDouble() * (2 * Math.PI);
                 myWriter.write("   " + ratio + "   " + velocity + "   " + angle + "\n");
             }
             myWriter.close();
-            System.out.println("Successfully wrote to the file.");
+            System.out.println("Successfully wrote static.txt");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -59,7 +56,7 @@ public class GeneratorFiles {
                 myWriter.write(String.valueOf(order)+'\n');
             }
             myWriter.close();
-            System.out.println("Successfully wrote to the file.");
+            System.out.println("Successfully wrote orders.txt");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -73,14 +70,13 @@ public class GeneratorFiles {
             int count = 0;
             for (ArrayList<Double> frame : frames) {
                 if(count == 0 || count == 300){
-                    myWriter.write(String.valueOf(N)+'\n');
                     myWriter.write(String.valueOf(frameNum)+'\n');
                     frameNum++;
                     count = 0;
                 }
-                double vx = cos(frame.get(3)) * frame.get(4);
-                double vy = sin(frame.get(3)) * frame.get(4);
-                myWriter.write(frame.get(0) + "\t" + frame.get(1) + "\t" + frame.get(2)  + "\t" + "0.0" + "\t" + vx + "\t" + vy + "\n");
+                Double d = frame.get(0);
+                Integer id = d.intValue();
+                myWriter.write( id + "\t" + frame.get(1) + "\t" + frame.get(2)  + "\t" + "0.0" + "\t" + frame.get(4) + "\t" + frame.get(3) + "\t" + frame.get(5) +"\n");
                 count++;
 
             }
