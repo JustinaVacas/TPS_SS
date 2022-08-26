@@ -7,11 +7,12 @@ def draw(dataOrder, iters, eta, N, L, R):
         data=go.Scatter(
             x=list(range(1, iters + 1)), y=dataOrder,
             mode='lines',
+            marker={'color':'purple'}
         ),
         layout=go.Layout(
-            title=dict(text=f'Order parameter per iteration [N={N} - L={L} - Rc={R} - eta={eta}]', x=0.5),
-            xaxis=dict(title='Iteration'),
-            yaxis=dict(title='Order parameter'),
+            title=dict(text=f'Orden vs Iteraciones [N={N} - L={L} - rc={R} - n={eta}]', x=0.5),
+            xaxis=dict(title='Iteraciones'),
+            yaxis=dict(title='Orden'),
         )
     )
 
@@ -34,4 +35,4 @@ def parseParameters(file):
 
 if __name__ == '__main__':
     birds, iterations = parseParameters(sys.argv[1])
-    draw(birds, iterations, 2.0, 300, 7, 1)
+    draw(birds, iterations, 2, 300, 7, 1)

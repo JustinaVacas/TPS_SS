@@ -45,7 +45,7 @@ public class CIM {
         final double auxY = Math.abs(neighbourParticle.getY() - currentParticle.getY());
         final double Y = Double.min(auxY, L - auxY);
         double distance = Math.sqrt(Math.pow(X, 2) + Math.pow(Y, 2));
-        return distance - neighbourParticle.getRadio() - currentParticle.getRadio();
+        return distance;
     }
 
     public static void FillMatrix(ArrayList<Particle> particlesArray, Integer[][][] matrix, double ancho, int M){

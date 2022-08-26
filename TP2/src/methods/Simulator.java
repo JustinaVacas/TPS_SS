@@ -68,7 +68,7 @@ public class Simulator {
 
     public static List<Double> OffLatice(int M, int rc, Map<Integer,List<Integer>> cim, Integer[][][] matrix, boolean periodic, double dt, int L){
         int iter = 0;
-        int max = 100;
+        int max = 500;
         //lista de double de los orders
         List<Double> order = new ArrayList<>();
         while (iter < max) {
