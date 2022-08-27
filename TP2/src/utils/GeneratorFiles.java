@@ -10,12 +10,12 @@ public class GeneratorFiles {
 
     public static int N = 300;
     public static int L = 7;
-    public static double n = 2.5;
+    public static double n = 0.5;
     public static double v = 0.03;
 
     public static void main(String[] args) {
         try {
-            FileWriter myWriter = new FileWriter("./dynamic1_6.txt");
+            FileWriter myWriter = new FileWriter("./dynamic1_4.txt");
             myWriter.write("   0\n");
             for(int i=0; i < N; i++){
                 double randomX = ((Math.random() * (L)) + 0);
@@ -23,7 +23,7 @@ public class GeneratorFiles {
                 myWriter.write("   " + randomX + "   " + randomY + "\n");
             }
             myWriter.close();
-            System.out.println("Successfully wrote dynamic1_6.txt");
+            System.out.println("Successfully wrote dynamic1_4.txt");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -31,7 +31,7 @@ public class GeneratorFiles {
 
         try {
             final Random random = new Random();
-            FileWriter myWriter = new FileWriter("./static1_6.txt");
+            FileWriter myWriter = new FileWriter("./static1_4.txt");
             myWriter.write("   " + N + "\n");
             myWriter.write("   " + L + "\n");
             myWriter.write("   " + n + "\n");
@@ -42,7 +42,7 @@ public class GeneratorFiles {
                 myWriter.write("   " + ratio + "   " + velocity + "   " + angle + "\n");
             }
             myWriter.close();
-            System.out.println("Successfully wrote static1_6.txt");
+            System.out.println("Successfully wrote static1_4.txt");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -51,12 +51,12 @@ public class GeneratorFiles {
 
     public static void output(List<Double> orders){
         try {
-            FileWriter myWriter = new FileWriter("./orders1_6.txt");
+            FileWriter myWriter = new FileWriter("./orders1_4.txt");
             for (Double order: orders) {
                 myWriter.write(String.valueOf(order)+'\n');
             }
             myWriter.close();
-            System.out.println("Successfully wrote orders1_6.txt");
+            System.out.println("Successfully wrote orders1_4.txt");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -65,7 +65,7 @@ public class GeneratorFiles {
 
     public static void outputFrames(List<ArrayList<Double>> frames){
         try {
-            FileWriter myWriter = new FileWriter("./frames1_6.txt");
+            FileWriter myWriter = new FileWriter("./frames1_4.txt");
             int frameNum = 0;
             int count = 0;
             for (ArrayList<Double> frame : frames) {
@@ -81,7 +81,7 @@ public class GeneratorFiles {
 
             }
             myWriter.close();
-            System.out.println("Successfully wrote frames1_6.txt.");
+            System.out.println("Successfully wrote frames1_4.txt.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();

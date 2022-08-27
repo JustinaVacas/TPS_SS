@@ -35,4 +35,4 @@ def parseParameters(file):
 
 if __name__ == '__main__':
     birds, iterations = parseParameters(sys.argv[1])
-    draw(birds, iterations, 2.5, 300, 7, 1)
+    draw(birds, iterations, 0.5, 300, 7, 1)
