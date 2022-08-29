@@ -15,31 +15,31 @@ def draw(dataOrder, iters, dataOrder2, dataOrder3, dataOrder4, dataOrder5, dataO
     data.append(go.Scatter(
         x=list(range(1, iters + 1)), y=dataOrder2,
         mode='lines',
-        name='0.5',
+        name='1',
         marker={'color':'green'}
     ))
     data.append(go.Scatter(
         x=list(range(1, iters + 1)), y=dataOrder3,
         mode='lines',
-        name='1',
+        name='2',
         marker={'color':'purple'}
     ))
     data.append(go.Scatter(
         x=list(range(1, iters + 1)), y=dataOrder4,
         mode='lines',
-        name='1.5',
+        name='3',
         marker={'color':'orange'}
     ))
     data.append(go.Scatter(
         x=list(range(1, iters + 1)), y=dataOrder5,
         mode='lines',
-        name='2',
+        name='4',
         marker={'color':'blue'}
     ))
     data.append(go.Scatter(
         x=list(range(1, iters + 1)), y=dataOrder6,
         mode='lines',
-        name='2.5',
+        name='5',
         marker={'color':'red'}
     ))
 
