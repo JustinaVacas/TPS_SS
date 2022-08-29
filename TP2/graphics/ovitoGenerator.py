@@ -13,8 +13,8 @@ def export_to_ovito(frame_file):
 
     def simulation_cell(frame, data):
         cell = SimulationCell()
-        cell[:, 0] = (25, 0, 0)      # va el L donde estan los 7s
-        cell[:, 1] = (0, 25, 0)
+        cell[:, 0] = (7, 0, 0)      # va el L donde estan los 7s
+        cell[:, 1] = (0, 7, 0)
         cell[:, 2] = (0, 0, 2)
         data.objects.append(cell)
 
@@ -23,7 +23,7 @@ def export_to_ovito(frame_file):
 
     pipeline.modifiers.append(simulation_cell)
 
-    export_file(pipeline, 'results_ovito3.dump', 'lammps/dump',
+    export_file(pipeline, 'results_ovito3_3.dump', 'lammps/dump',
                 columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius", "Angle", "Force.X", "Force.Y", "Force.Z"],
                 multiple_frames=True, start_frame=0, end_frame=len(data_frame) - 1)
 
@@ -48,7 +48,7 @@ def get_particle_data(frame_file):
         df = pd.DataFrame(np.array(frame_lines), columns=["id", "x", "y", "z", "speed", "angle", "radius"])
         frames.append(df)
     print(frames)
-
+    print("frames len ",len(frames))
     return frames
 
 
