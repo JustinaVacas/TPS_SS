@@ -15,13 +15,13 @@ def draw(orders1, orders2, orders3, orders4, orders5, orders6):
     # plot:
     fig, ax = plt.subplots()
 
-    ax.errorbar(x, y, yerr, fmt='o', linewidth=2, capsize=10, color="purple", ecolor='lightgreen', elinewidth=5)
+    ax.errorbar(x, y, yerr, fmt='o', linewidth=2, capsize=10, color="purple", ecolor='lightgreen', elinewidth=2)
 
     ax.set(xlim=(0, 3), xticks=np.arange(0, 3, 0.5),
            ylim=(0.63, 1.01), yticks=np.arange(0.8, 1.1, 0.2))
 
-    plt.xlabel('n')
-    plt.ylabel('orden')
+    plt.xlabel('Ruido')
+    plt.ylabel('Orden')
 
 
     plt.show()
