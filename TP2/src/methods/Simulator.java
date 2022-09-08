@@ -30,7 +30,6 @@ public class Simulator {
 
         int rc = 1;
         int M = (int) Math.floor(L/rc);
-        // TODO ver la formula
         System.out.println("M optimo: " + M);
 
         double p = N/(pow(L,2));

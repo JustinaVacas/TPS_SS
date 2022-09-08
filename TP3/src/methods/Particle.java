@@ -1,32 +1,21 @@
 package methods;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Particle {
 
     private int id;
     private double radio;
     private double v;
-    private double angle;
     private double x;
     private double y;
-    private List<Integer> neighbours;
+    private double m;
+    private double angle;
 
-    public Particle(int id, double radio, double v, double angle) {
+    public Particle(int id, double radio, double v, double m, double angle) {
         this.id = id;
         this.radio = radio;
         this.v = v;
+        this.m = m;
         this.angle = angle;
-        this.neighbours = new ArrayList<>();
-    }
-
-    public List<Integer> getNeighbours() {
-        return neighbours;
-    }
-
-    public void setNeighbours(List<Integer> neighbours) {
-        this.neighbours = neighbours;
     }
 
     public int getId() {
@@ -69,6 +58,15 @@ public class Particle {
         this.v = v;
     }
 
+    public double getM() {
+        return m;
+    }
+
+    public void setM(double m) {
+        this.m = m;
+    }
+
+
     public double getAngle() {
         return angle;
     }
@@ -79,14 +77,14 @@ public class Particle {
 
     @Override
     public String toString() {
-        return "methods.Particle{" +
+        return "Particle{" +
                 "id= " + id +
                 ", radio= " + radio +
                 ", v= " + v +
-                ", angle= " + angle +
+                ", m= " + m +
                 ", x= " + x +
                 ", y= " + y +
-                ", neighbours= " + neighbours +
+                ", angle = " + angle +
                 '}';
     }
 }
