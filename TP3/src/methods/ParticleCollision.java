@@ -8,7 +8,8 @@ public class ParticleCollision {
     public enum CollisionWall{
         VERTICAL,
         HORIZONTAL,
-        CORNER
+        CORNER,
+        TABIQUE,
     }
     private CollisionWall wall;
 
@@ -49,5 +50,15 @@ public class ParticleCollision {
 
     public void setWall(CollisionWall wall) {
         this.wall = wall;
+    }
+
+    @Override
+    public String toString() {
+        return "ParticleCollision{" +
+                "particle1=" + particle1 +
+                ", particle2=" + particle2 +
+                ", tc=" + tc +
+                ", wall=" + wall +
+                '}';
     }
 }

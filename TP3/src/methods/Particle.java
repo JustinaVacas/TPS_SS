@@ -1,5 +1,7 @@
 package methods;
 
+import static java.lang.Math.*;
+
 public class Particle {
 
     private int id;
@@ -9,6 +11,8 @@ public class Particle {
     private double y;
     private double m;
     private double angle;
+    private double vx;
+    private double vy;
 
     public Particle(int id, double radio, double v, double m, double angle) {
         this.id = id;
@@ -16,6 +20,8 @@ public class Particle {
         this.v = v;
         this.m = m;
         this.angle = angle;
+        this.vx = cos(angle)*v;
+        this.vy = sin(angle)*v;
     }
 
     public int getId() {
@@ -75,12 +81,30 @@ public class Particle {
         this.angle = angle;
     }
 
+    public double getVx() {
+        return vx;
+    }
+
+    public void setVx(double vx) {
+        this.vx = vx;
+    }
+
+    public double getVy() {
+        return vy;
+    }
+
+    public void setVy(double vy) {
+        this.vy = vy;
+    }
+
     @Override
     public String toString() {
         return "Particle{" +
                 "id= " + id +
                 ", radio= " + radio +
                 ", v= " + v +
+                ", vx = " + vx +
+                ", vy = " + vy +
                 ", m= " + m +
                 ", x= " + x +
                 ", y= " + y +

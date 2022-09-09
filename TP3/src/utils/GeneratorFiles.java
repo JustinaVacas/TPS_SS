@@ -67,4 +67,35 @@ public class GeneratorFiles {
         }
     }
 
+    public static int getN() {
+        return N;
+    }
+
+    public static int getL() {
+        return L;
+    }
+
+    public static double getWidth() {
+        return width;
+    }
+
+    public static double getHeight() {
+        return height;
+    }
+
+    public static double getR() {
+        return r;
+    }
+
+    public static double getM() {
+        return m;
+    }
+
+    public static double getV() {
+        return v;
+    }
+
+    public static List<Pair<Double, Double>> getParticles() {
+        return particles;
+    }
 }
