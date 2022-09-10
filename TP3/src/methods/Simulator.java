@@ -34,24 +34,42 @@ public class Simulator {
     }
 
     public static void gazDiffusion() {
+        System.out.println("particles: " + particlesArray.size());
+        List<Particle> particles1 = new ArrayList<>();
+        List<Particle> particles2 = new ArrayList<>();
+        int count = 0;
+        while(count < 40) {
+        /*if(particles2.size() != 0) {
+            if (Math.floor(particles1.size() / particles2.size()) == 0.5 || Math.ceil(particles1.size() / particles2.size()) == 0.5) {
+                break;
+            }
+        }*/
+            particles1 = new ArrayList<>();
+            particles2 = new ArrayList<>();
+            List<ParticleCollision> collisions = new ArrayList<>();
+            checkWallsAndParticles(collisions);
+            // System.out.println("collision dps de choque con paredes: " + collisions);
+            // System.out.println("---------------------------------------------------");
 
-        List<ParticleCollision> collisions = new ArrayList<>();
-        checkWallsAndParticles(collisions);
-        System.out.println("collision dps de choque con paredes: " + collisions);
-        System.out.println("---------------------------------------------------");
+            updatePositions(collisions);
+            System.out.println("dps de updatePosition " + particlesArray);
+            // System.out.println("---------------------------------------------------");
 
-        updatePositions(collisions);
-        System.out.println("dps de updatePosition " + particlesArray);
-        System.out.println("---------------------------------------------------");
+            addFrames(collisions, frames);
+            //System.out.println("frames " + frames);
+            // System.out.println("---------------------------------------------------");
 
-        addFrames(collisions, frames);
-        System.out.println("frames " + frames);
-        System.out.println("---------------------------------------------------");
-
-        updateVelocity(collisions);
-        System.out.println("dps de updateVelocity " + particlesArray);
-        System.out.println("---------------------------------------------------");
-
+            updateVelocity(collisions);
+            //System.out.println("dps de updateVelocity " + particlesArray);
+            // System.out.println("---------------------------------------------------");
+            for (Particle particle : particlesArray) {
+                if (particle.getX() < 0.12) {
+                    particles1.add(particle);
+                } else {
+                    particles2.add(particle);
+                }
+            }
+        }
     }
 
     public static void checkWallsAndParticles(List<ParticleCollision> collisions){
@@ -183,8 +201,8 @@ public class Simulator {
     public static void updatePositions(List<ParticleCollision> collisions){
         for(ParticleCollision particle : collisions){
             Particle particle1 = particle.getParticle1();
-            double newX = particle1.getX() + particle1.getVx() * particle.getTc();
-            double newY = particle1.getX() + particle1.getVy() * particle.getTc();
+            double newX = particle1.getX() + (particle1.getVx() * particle.getTc());
+            double newY = particle1.getY() + (particle1.getVy() * particle.getTc());
             particle1.setX(newX);
             particle1.setY(newY);
         }
