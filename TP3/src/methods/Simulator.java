@@ -38,7 +38,7 @@ public class Simulator {
         List<Particle> particles1 = new ArrayList<>();
         List<Particle> particles2 = new ArrayList<>();
         int count = 0;
-        while(count < 50) {
+        while(count < 20) {
             /*if(particles2.size() != 0) {
                 if (Math.floor(particles1.size() / particles2.size()) == 0.5 || Math.ceil(particles1.size() / particles2.size()) == 0.5) {
                     break;
@@ -209,6 +209,7 @@ public class Simulator {
             Particle particle1 = particle.getParticle1();
             double newX = particle1.getX() + (particle1.getVx() * particle.getTc());
             double newY = particle1.getY() + (particle1.getVy() * particle.getTc());
+            //TODO no sera la posicion incial de la paritcula (inicial del dynamic)
             particle1.setX(newX);
             particle1.setY(newY);
         }
@@ -240,7 +241,13 @@ public class Simulator {
             if(particle.getWall() == ParticleCollision.CollisionWall.HORIZONTAL){
                 particle1.setVy(-particle1.getVy());
             }
+            //choca pared horizontal
+            if(particle.getWall() == ParticleCollision.CollisionWall.CORNER){
+                particle1.setVy(-particle1.getVy());
+                particle1.setVx(-particle1.getVx());
+            }
             particle1.setV(Math.sqrt(Math.pow(particle1.getVx(),2)+Math.pow(particle1.getVy(),2)));
+
             if(particle.getWall() == null && particle.getParticle2() != null ){
 
                 Particle particle2 = particle.getParticle2();
@@ -249,22 +256,22 @@ public class Simulator {
                 double[] deltaR = new double[]{particle1.getX() - particle2.getX(),particle1.getY()- particle2.getY()};
                 double[] deltaV = new double[]{particle1.getVx() - particle2.getVx(), particle1.getVy() - particle2.getVy()};
                 double vr = deltaR[0] * deltaV[0] + deltaR[1] * deltaV[1];
-                double J = 2 * particle1.getM() * particle2.getM() * vr / (sigma * (particle1.getM() + particle2.getM()));
+                double J = (2 * particle1.getM() * particle2.getM() * vr) / (sigma * (particle1.getM() + particle2.getM()));
                 double Jx = (J * (particle1.getX() - particle2.getX()) )/sigma;
                 double Jy = (J * (particle1.getY() - particle2.getY()) )/sigma;
 
                 double Vx1 = particle1.getVx() + Jx/particle1.getM();
-                double Vy1 = particle1.getVy() + Jx/particle1.getM();
-                double Vx2 = particle2.getVx() + Jx/particle2.getM();
-                double Vy2 = particle2.getVy() + Jx/particle2.getM();
+                double Vy1 = particle1.getVy() + Jy/particle1.getM();
+                double Vx2 = particle2.getVx() - Jx/particle2.getM();
+                double Vy2 = particle2.getVy() - Jy/particle2.getM();
 
                 particle1.setV(Math.sqrt(Vx1*Vx1 + Vy1*Vy1));
                 particle2.setV(Math.sqrt(Vx2*Vx2 + Vy2*Vy2));
 
-                particle1.setVx(particle1.getVx() + Jx/particle1.getM());
-                particle1.setVy(particle1.getVy() + Jy/particle1.getM());
-                particle2.setVx(particle2.getVx() + Jx/particle2.getM());
-                particle2.setVy(particle2.getVy() + Jy/particle2.getM());
+                particle1.setVx(Vx1);
+                particle1.setVy(Vy1);
+                particle2.setVx(Vx2);
+                particle2.setVy(Vy2);
             }
         }
     }
