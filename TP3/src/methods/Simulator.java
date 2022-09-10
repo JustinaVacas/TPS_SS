@@ -84,28 +84,28 @@ public class Simulator {
             ParticleCollision.CollisionWall wall;
             //paredes verticales
             if (vx > 0) {
-                //choca tabique, esta entre la pared 1 y. 2
+                //choca la pared del medio, esta entre la pared 1 y 2
                 if (particle.getX() < wallX2 && particle.getX() > wallX1 && (particle.getY() < 0.4 || particle.getY() > 0.5)) {
                     tcv = (wallX2 - particle.getRadio() - particle.getX()) / vx;
-                    double newY = particle.getX() + vx * tcv;
-                    if(newY > tabiqueDown && newY < tabiqueUp){
+                    double newY = particle.getY() + vy * tcv;
+                    if(newY > tabiqueDown && newY < tabiqueUp){ // si pasa por el tabique
                         tcv = (wallX3 - particle.getRadio() - particle.getX()) / vx;
                     }
                 }
-                // choca en la ultima pared por pasar por el tabique, esta entre la 1 y la 2
+                // choca en la ultima pared por pasar por el tabique, esta entre la pared 1 y la 2
                 else if (particle.getX() < wallX2 && particle.getX() > wallX1 && (particle.getY() > 0.4 && particle.getY() < 0.5)) {
                     tcv = (wallX3 - particle.getRadio() - particle.getX()) / vx;
                 }
-                //choca ultima pared, x entre 2 y 3 pared
+                //choca ultima pared, esta entre 2 y 3 pared
                 else if (particle.getX() > wallX2 && particle.getX() < wallX3) {
                     tcv = (wallX3 - particle.getRadio() - particle.getX()) / vx;
                 }
             } else {
-                //choca tabique y esta entre la pared 2 y 3
+                //choca la pared del medio y esta entre la pared 2 y 3
                 if (particle.getX() > wallX2 && particle.getX() < wallX3 && (particle.getY() < 0.4 || particle.getY() > 0.5)) {
                     tcv = (wallX2 + particle.getRadio() - particle.getX()) / vx;
-                    double newY = particle.getX() + vx * tcv;
-                    if(newY > tabiqueDown && newY < tabiqueUp){
+                    double newY = particle.getY() + vy * tcv;
+                    if(newY > tabiqueDown && newY < tabiqueUp){ // si pasa por el tabique
                         tcv = (wallX1 + particle.getRadio() - particle.getX()) / vx;
                     }
                 }
@@ -209,7 +209,6 @@ public class Simulator {
             Particle particle1 = particle.getParticle1();
             double newX = particle1.getX() + (particle1.getVx() * particle.getTc());
             double newY = particle1.getY() + (particle1.getVy() * particle.getTc());
-            //TODO no sera la posicion incial de la paritcula (inicial del dynamic)
             particle1.setX(newX);
             particle1.setY(newY);
         }
