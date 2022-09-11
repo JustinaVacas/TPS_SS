@@ -36,7 +36,9 @@ public class Parser {
                 double velocidad = Double.parseDouble(dataStatic[1]);
                 double masa = Double.parseDouble(dataStatic[2]);
                 double angle = Double.parseDouble(dataStatic[3]);
-                Particle particle = new Particle(id,radio,velocidad,masa,angle);
+                double vx = Math.cos(angle)*velocidad;
+                double vy = Math.sin(angle)*velocidad;
+                Particle particle = new Particle(id,radio,vx,vy,masa,angle);
                 Simulator.particlesArray.add(particle);
                 id++;
 

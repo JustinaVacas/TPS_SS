@@ -10,6 +10,11 @@ public class ParticleCollision {
         HORIZONTAL,
         CORNER,
         TABIQUE,
+        LEFT_WALL,
+        RIGHT_WALL,
+        UPPER_WALL,
+        DOWN_WALL,
+        MIDDLE_WALL,
     }
     private CollisionWall wall;
 

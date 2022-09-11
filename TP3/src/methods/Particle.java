@@ -1,12 +1,9 @@
 package methods;
 
-import static java.lang.Math.*;
-
 public class Particle {
 
     private int id;
     private double radio;
-    private double v;
     private double x;
     private double y;
     private double m;
@@ -14,14 +11,13 @@ public class Particle {
     private double vx;
     private double vy;
 
-    public Particle(int id, double radio, double v, double m, double angle) {
+    public Particle(int id, double radio, double vx, double vy, double m, double angle) {
         this.id = id;
         this.radio = radio;
-        this.v = v;
         this.m = m;
         this.angle = angle;
-        this.vx = cos(angle)*v;
-        this.vy = sin(angle)*v;
+        this.vx = vx;
+        this.vy = vy;
     }
 
     public int getId() {
@@ -54,14 +50,6 @@ public class Particle {
 
     public void setY(double y) {
         this.y = y;
-    }
-
-    public double getV() {
-        return v;
-    }
-
-    public void setV(double v) {
-        this.v = v;
     }
 
     public double getM() {
@@ -102,7 +90,6 @@ public class Particle {
         return "Particle{" +
                 "id= " + id +
                 ", radio= " + radio +
-                ", v= " + v +
                 ", vx = " + vx +
                 ", vy = " + vy +
                 ", m= " + m +
