@@ -89,47 +89,45 @@ public class Simulator {
                 //choca la pared del medio, esta entre la pared 1 y 2
                 if (particle.getX() < wallX2 && particle.getX() > wallX1 && (particle.getY() < 0.4 || particle.getY() > 0.5)) {
                     tcv = (wallX2 - particle.getRadio() - particle.getX()) / vx;
-                    wallv = ParticleCollision.CollisionWall.MIDDLE_WALL;
+                    wallv = ParticleCollision.CollisionWall.VERTICAL;
                     double newY = particle.getY() + (vy * tcv);
                     if(newY > tabiqueDown && newY < tabiqueUp){ // si pasa por el tabique
                         tcv = (wallX3 - particle.getRadio() - particle.getX()) / vx;
-                        wallv = ParticleCollision.CollisionWall.RIGHT_WALL;
+                        wallv = ParticleCollision.CollisionWall.VERTICAL;
                     }
                 }
                 // choca en la ultima pared por pasar por el tabique, esta entre la pared 1 y la 2
                 else if (particle.getX() < wallX2 && particle.getX() > wallX1 && (particle.getY() > 0.4 && particle.getY() < 0.5)) {
                     tcv = (wallX3 - particle.getRadio() - particle.getX()) / vx;
-                    wallv = ParticleCollision.CollisionWall.RIGHT_WALL;
-
+                    wallv = ParticleCollision.CollisionWall.VERTICAL;
                 }
                 //choca ultima pared, esta entre 2 y 3 pared
                 else if (particle.getX() > wallX2 && particle.getX() < wallX3) {
                     tcv = (wallX3 - particle.getRadio() - particle.getX()) / vx;
-                    wallv = ParticleCollision.CollisionWall.RIGHT_WALL;
+                    wallv = ParticleCollision.CollisionWall.VERTICAL;
 
                 }
             } else {
                 //choca la pared del medio y esta entre la pared 2 y 3
                 if (particle.getX() > wallX2 && particle.getX() < wallX3 && (particle.getY() < 0.4 || particle.getY() > 0.5)) {
                     tcv = (wallX2 + particle.getRadio() - particle.getX()) / vx;
-                    wallv = ParticleCollision.CollisionWall.MIDDLE_WALL;
+                    wallv = ParticleCollision.CollisionWall.VERTICAL;
                     double newY = particle.getY() + (vy * tcv);
                     if(newY > tabiqueDown && newY < tabiqueUp){ // si pasa por el tabique
                         tcv = (wallX1 + particle.getRadio() - particle.getX()) / vx;
-                        wallv = ParticleCollision.CollisionWall.LEFT_WALL;
+                        wallv = ParticleCollision.CollisionWall.VERTICAL;
                     }
                 }
                 // choca en la primera pared por pasar por el tabique, esta entre la 2 y la 3
                 else if (particle.getX() > wallX2 && particle.getX() < wallX3 && (particle.getY() > 0.4 && particle.getY() < 0.5)) {
                     tcv = (wallX1 + particle.getRadio() - particle.getX()) / vx;
-                    wallv = ParticleCollision.CollisionWall.LEFT_WALL;
+                    wallv = ParticleCollision.CollisionWall.VERTICAL;
 
                 }
                 //choca primera pared, x entre 1 y 2 pared
                 else if (particle.getX() < wallX2 && particle.getX() > wallX1) {
                     tcv = (wallX1 + particle.getRadio() - particle.getX()) / vx;
-                    wallv = ParticleCollision.CollisionWall.LEFT_WALL;
-
+                    wallv = ParticleCollision.CollisionWall.VERTICAL;
                 }
             }
             //paredes horizontal
@@ -137,14 +135,14 @@ public class Simulator {
                 //choca pared arriba y no esta en el tabique (esta entre la 1 y 2 o la 2 y 3)
                 if((particle.getX() > wallX1 && particle.getX() < wallX2) || (particle.getX() > wallX2 && particle.getX() < wallX3) ){
                     tch = (height - particle.getRadio() - particle.getY()) / vy;
-                    wallh = ParticleCollision.CollisionWall.UPPER_WALL;
+                    wallh = ParticleCollision.CollisionWall.HORIZONTAL;
 
                 }
             } else {
                 //choca pared abajo y no esta en el tabique (esta entre la 1 y 2 o la 2 y 3)
                 if(particle.getX() > wallX2 && particle.getX() < wallX3){
                     tch =  (0 + particle.getRadio() - particle.getY()) / vy;
-                    wallh = ParticleCollision.CollisionWall.DOWN_WALL;
+                    wallh = ParticleCollision.CollisionWall.HORIZONTAL;
                 }
             }
 
@@ -227,6 +225,7 @@ public class Simulator {
             Particle particle1 = particle.getParticle1();
             double newX = particle1.getX() + (particle1.getVx() * particle.getTc());
             double newY = particle1.getY() + (particle1.getVy() * particle.getTc());
+            System.out.println("new y " + newY);
             particle1.setX(newX);
             particle1.setY(newY);
         }
@@ -254,12 +253,12 @@ public class Simulator {
         for(ParticleCollision particle : collisions){
             Particle particle1 = particle.getParticle1();
             //choca pared vertical
-            if(particle.getWall() == ParticleCollision.CollisionWall.LEFT_WALL || particle.getWall() == ParticleCollision.CollisionWall.TABIQUE || particle.getWall() == ParticleCollision.CollisionWall.MIDDLE_WALL){
+            if(particle.getWall() == ParticleCollision.CollisionWall.TABIQUE || particle.getWall() == ParticleCollision.CollisionWall.VERTICAL){
                 vx = particle1.getVx();
                 particle1.setVx(-vx);
             }
             //choca pared horizontal
-            if(particle.getWall() == ParticleCollision.CollisionWall.HORIZONTAL || particle.getWall() == ParticleCollision.CollisionWall.DOWN_WALL){
+            if(particle.getWall() == ParticleCollision.CollisionWall.HORIZONTAL){
                 vy = particle1.getVy();
                 particle1.setVy(-vy);
             }
