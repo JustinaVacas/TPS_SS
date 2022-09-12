@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+
 public class GeneratorFiles {
 
     static int N = 100;
@@ -25,8 +26,8 @@ public class GeneratorFiles {
             myWriter.write("   0\n");
 
             while(particles.size() != N){
-                double randomX = ((Math.random() * (width/2)) + 0);
-                double randomY = ((Math.random() * (height)) + 0);
+                double randomX = r + ((width/2 - 2*r) * Math.random());
+                double randomY = r + ((height - 2*r) * Math.random());
                 boolean flag = false;
                 for(Pair particle : particles){
                     double dist = Math.pow(randomX - (double) particle.getKey(),2) + Math.pow(randomY - (double) particle.getValue(), 2);
@@ -34,6 +35,10 @@ public class GeneratorFiles {
                         flag = true;
                         break;
                     }
+//                    else if(randomX + r >= width/2){
+//                        flag = true;
+//                        break;
+//                    }
                 }
                 if(flag){
                     continue;
