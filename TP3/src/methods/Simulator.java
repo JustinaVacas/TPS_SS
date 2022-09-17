@@ -48,7 +48,7 @@ public class Simulator {
         double eqTime = 0;
         double epsilon = 0.01;
 //        while (!eqFrac || (currentTime < eqTime*2)) {
-        while(count < 2) {
+        while(count < 5) {
             System.out.println("---------------------------- ITERACION " + count + " -----------------------------------");
             /*if(particles2.size() != 0) {
                 if (Math.floor(particles1.size() / particles2.size()) == 0.5 || Math.ceil(particles1.size() / particles2.size()) == 0.5) {

@@ -118,25 +118,26 @@ public class GeneratorFiles {
                 }
                 else if(frame.size() == 4){
                     myWriter.write(String.format("%g\n", frame.get(0)));
-                    if(frame.get(1)==1){   //choco pared
-                        Double d1 = frame.get(2);
-                        Integer id1 = d1.intValue();
-                        Double d2 = frame.get(3);
-                        Integer id2 = d2.intValue();
-                        myWriter.write(String.format("%s\t%d\t%d\n\n", "WC", id1, id2));
-                    }
-                    else{   //choco particula
-                        Double d1 = frame.get(2);
-                        Integer id1 = d1.intValue();
-                        Double d2 = frame.get(3);
-                        Integer id2 = d2.intValue();
-                        myWriter.write(String.format("%s\t%d\t%d\n\n", "PC", id1, id2));
-                    }
+//                    if(frame.get(1)==1){   //choco pared
+//                        Double d1 = frame.get(2);
+//                        Integer id1 = d1.intValue();
+//                        Double d2 = frame.get(3);
+//                        Integer id2 = d2.intValue();
+//                        myWriter.write(String.format("%s\t%d\t%d\n\n", "WC", id1, id2));
+//                    }
+//                    else{   //choco particula
+//                        Double d1 = frame.get(2);
+//                        Integer id1 = d1.intValue();
+//                        Double d2 = frame.get(3);
+//                        Integer id2 = d2.intValue();
+//                        myWriter.write(String.format("%s\t%d\t%d\n\n", "PC", id1, id2));
+//                    }
+                    continue;
 
                 } else {
                     Double d = frame.get(0);
                     Integer id = d.intValue();
-                    myWriter.write(id + "\t" + frame.get(1) + "\t" + frame.get(2) + "\t" + frame.get(3) + "\t" + frame.get(4) + "\n");
+                    myWriter.write(id + "\t" + frame.get(1) + "\t" + frame.get(2) + "\t" + frame.get(3) + "\t" + frame.get(4) + "\t" + 0.0015 + "\n");
                 }
                 count++;
             }
