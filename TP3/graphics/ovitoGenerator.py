@@ -28,6 +28,15 @@ def export_to_ovito(frame_file):
                 multiple_frames=True, start_frame=0, end_frame=len(data_frame) - 1)
 
 
+def _generate_square(L: int):
+    square_points = []
+    for y in np.arange(0, 0.04, 0.0005):
+        square_points.append([0.12, y, 0])
+        square_points.append([0.12, 0.09-y, 0])
+    return np.array(square_points)
+
+
+
 def get_particle_data(frame_file):
 
     frames = []
@@ -54,10 +63,11 @@ def get_particle_data(frame_file):
 
 def get_particles(data_frame):
     particles = Particles()
-    particles.create_property('Particle Identifier', data=data_frame.id)
-    particles.create_property("Position", data=np.array((data_frame.x, data_frame.y, np.zeros(len(data_frame.x)))).T)
-    particles.create_property("Force", data=np.array((data_frame.vx, data_frame.vy, np.zeros(len(data_frame.x)))).T)
-    particles.create_property('Radius', data=data_frame.radius)
+    square_points = _generate_square(6)
+    particles.create_property('Particle Identifier', data=np.concatenate((data_frame.id, np.arange(len(data_frame.x), len(data_frame.x) + len(square_points)))))
+    particles.create_property("Position", data=np.concatenate((np.array((data_frame.x, data_frame.y, np.zeros(len(data_frame.x)))).T, square_points)))
+    particles.create_property("Force", data=np.concatenate((np.array((data_frame.vx, data_frame.vy, np.zeros(len(data_frame.x)))).T,np.zeros((len(square_points), 3)))))
+    particles.create_property('Radius', data=np.concatenate((data_frame.radius, np.full(len(square_points), 0.0005))))
 
     return particles
 
