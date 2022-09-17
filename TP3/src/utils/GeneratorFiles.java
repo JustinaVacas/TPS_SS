@@ -72,6 +72,8 @@ public class GeneratorFiles {
         }
     }
 
+
+
     public static int getN() {
         return N;
     }
@@ -103,4 +105,47 @@ public class GeneratorFiles {
     public static List<Pair<Double, Double>> getParticles() {
         return particles;
     }
+
+    public static void outputFrames(List<ArrayList<Double>> frames){
+        //x y vx vy
+        try {
+            FileWriter myWriter = new FileWriter("./frames.txt");
+            int frameNum = 0;
+            int count = 0;
+            for (ArrayList<Double> frame : frames) {
+                if(frame.size() == 0){
+                    continue;
+                }
+                else if(frame.size() == 4){
+                    myWriter.write(String.format("%g\n", frame.get(0)));
+                    if(frame.get(1)==1){   //choco pared
+                        Double d1 = frame.get(2);
+                        Integer id1 = d1.intValue();
+                        Double d2 = frame.get(3);
+                        Integer id2 = d2.intValue();
+                        myWriter.write(String.format("%s\t%d\t%d\n\n", "WC", id1, id2));
+                    }
+                    else{   //choco particula
+                        Double d1 = frame.get(2);
+                        Integer id1 = d1.intValue();
+                        Double d2 = frame.get(3);
+                        Integer id2 = d2.intValue();
+                        myWriter.write(String.format("%s\t%d\t%d\n\n", "PC", id1, id2));
+                    }
+
+                } else {
+                    Double d = frame.get(0);
+                    Integer id = d.intValue();
+                    myWriter.write(id + "\t" + frame.get(1) + "\t" + frame.get(2) + "\t" + frame.get(3) + "\t" + frame.get(4) + "\n");
+                }
+                count++;
+            }
+            myWriter.close();
+            System.out.println("Successfully wrote frames.txt.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
 }

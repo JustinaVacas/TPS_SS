@@ -87,7 +87,8 @@ public class ParticleCollision implements Comparable<ParticleCollision>{
     @Override
     public String toString() {
         return "ParticleCollision{" +
-                "particle1=" + particle1 +
+                " tc=" + tc +
+                ", particle1=" + particle1 +
                 ", particle2=" + particle2 +
                 ", tc=" + tc +
                 ", wall=" + wall +
