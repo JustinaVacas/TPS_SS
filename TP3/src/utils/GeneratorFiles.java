@@ -31,14 +31,10 @@ public class GeneratorFiles {
                 boolean flag = false;
                 for(Pair particle : particles){
                     double dist = Math.pow(randomX - (double) particle.getKey(),2) + Math.pow(randomY - (double) particle.getValue(), 2);
-                    if(dist <= Math.pow(r + r,2)){
+                    if(dist <= Math.pow(r + r,2)*1.2){
                         flag = true;
                         break;
                     }
-//                    else if(randomX + r >= width/2){
-//                        flag = true;
-//                        break;
-//                    }
                 }
                 if(flag){
                     continue;
@@ -46,7 +42,6 @@ public class GeneratorFiles {
                 particles.add(new Pair<>(randomX, randomY));
                 myWriter.write("   " + randomX + "   " + randomY + "\n");
             }
-
             myWriter.close();
             System.out.println("Successfully wrote to the file dynamic.");
         } catch (IOException e) {
@@ -116,7 +111,7 @@ public class GeneratorFiles {
                 if(frame.size() == 0){
                     continue;
                 }
-                else if(frame.size() == 4){
+                else if(frame.size() == 1){
                     myWriter.write(String.format("%g\n", frame.get(0)));
 //                    if(frame.get(1)==1){   //choco pared
 //                        Double d1 = frame.get(2);

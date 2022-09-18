@@ -78,9 +78,9 @@ public class ParticleCollision implements Comparable<ParticleCollision>{
     @Override
     public int compareTo(ParticleCollision o) {
         int result = Double.compare(tc, o.tc);
-        if (result == 0) {
-            return checkTypeAndParticles(o) ? 0 : 1;
-        }
+//        if (result == 0) {
+//            return checkTypeAndParticles(o) ? 0 : 1;
+//        }
         return result;
     }
 
