@@ -11,8 +11,7 @@ import java.util.Random;
 
 public class GeneratorFiles {
 
-    static int N = 100;
-    static int L = 6;
+    static int N = 50;
     static double width = 0.24;
     static double height = 0.09;
     static double r = 0.0015;
@@ -22,7 +21,7 @@ public class GeneratorFiles {
 
     public static void main(String[] args) {
         try {
-            FileWriter myWriter = new FileWriter("./dynamic.txt");
+            FileWriter myWriter = new FileWriter("./dynamic_50_1.txt");
             myWriter.write("   0\n");
 
             while(particles.size() != N){
@@ -50,11 +49,10 @@ public class GeneratorFiles {
         }
 
         try {
-            FileWriter myWriter = new FileWriter("./static.txt");
+            FileWriter myWriter = new FileWriter("./static_50_1.txt");
             //r v m angle
             final Random random = new Random();
             myWriter.write("   " + N +"\n");
-            myWriter.write("   " + L + "\n");
             for(int i = 0; i < N; i++){
                 double angle = random.nextDouble() * (2 * Math.PI);
                 myWriter.write("   " + r + "   " + v + "   " + m + "   " + angle + "\n");
@@ -71,10 +69,6 @@ public class GeneratorFiles {
 
     public static int getN() {
         return N;
-    }
-
-    public static int getL() {
-        return L;
     }
 
     public static double getWidth() {
@@ -104,7 +98,7 @@ public class GeneratorFiles {
     public static void outputFrames(List<ArrayList<Double>> frames){
         //x y vx vy
         try {
-            FileWriter myWriter = new FileWriter("./frames.txt");
+            FileWriter myWriter = new FileWriter("./frames_100_1.txt");
             int frameNum = 0;
             int count = 0;
             for (ArrayList<Double> frame : frames) {
@@ -137,7 +131,7 @@ public class GeneratorFiles {
                 count++;
             }
             myWriter.close();
-            System.out.println("Successfully wrote frames.txt.");
+            System.out.println("Successfully wrote frames_100_1.txt.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();

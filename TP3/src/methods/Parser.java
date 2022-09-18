@@ -19,13 +19,6 @@ public class Parser {
                 Simulator.N = Integer.parseInt(data);
             }
 
-            // guardo L
-            if (myReaderStatic.hasNextLine()) {
-                String data = myReaderStatic.nextLine();
-                data = data.replaceAll(" ", "");
-                Simulator.L = Integer.parseInt(data);
-            }
-
             // guardo el resto
             int id = 0;
             while (myReaderStatic.hasNextLine()) {
