@@ -12,11 +12,6 @@ public class ParticleCollision implements Comparable<ParticleCollision>{
         HORIZONTAL,
         CORNER,
         TABIQUE,
-        LEFT_WALL,
-        RIGHT_WALL,
-        UPPER_WALL,
-        DOWN_WALL,
-        MIDDLE_WALL,
     }
     private CollisionWall wall;
 
@@ -90,7 +85,6 @@ public class ParticleCollision implements Comparable<ParticleCollision>{
                 " tc=" + tc +
                 ", particle1=" + particle1 +
                 ", particle2=" + particle2 +
-                ", tc=" + tc +
                 ", wall=" + wall +
                 '}';
     }

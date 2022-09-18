@@ -21,9 +21,11 @@ public class Simulator {
     public static double openingLength = 0.01;
     public static double currentTime = 0;
 
+    public static boolean flag = true;
+
     public static ArrayList<Particle> particlesArray = new ArrayList<>();
+    public static ArrayList<Particle> particlesCollision;
     public static List<ArrayList<Double>> frames = new ArrayList<>();
-    public static List<Double> times = new ArrayList<>();
 
     public static Particle particleAuxUp;
     public static Particle particleAuxDown;
@@ -34,7 +36,7 @@ public class Simulator {
         System.out.println("N: " + N);
         System.out.println("L: " + L);
         System.out.println("particulas: " + particlesArray);
-        System.out.println("---------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------");
 
         gazDiffusion();
 
@@ -43,7 +45,6 @@ public class Simulator {
     }
 
     public static void gazDiffusion() {
-        System.out.println("particles: " + particlesArray.size());
         List<Particle> particles1 = new ArrayList<>();
         List<Particle> particles2 = new ArrayList<>();
         int count = 0;
@@ -51,32 +52,39 @@ public class Simulator {
         boolean eqFrac = false;
         double eqTime = 0;
         double epsilon = 0.01;
+        List<ParticleCollision> collisions = new ArrayList<>();
+
 //        while (!eqFrac || (currentTime < eqTime*2)) {
-        while(count < 10) {
+        while(count < 810) {
+
             System.out.println("---------------------------- ITERACION " + count + " -----------------------------------");
-            /*if(particles2.size() != 0) {
-                if (Math.floor(particles1.size() / particles2.size()) == 0.5 || Math.ceil(particles1.size() / particles2.size()) == 0.5) {
-                    break;
-                }
-            }*/
+
+            if(flag){ //primera vez
+                checkWallsAndParticles(collisions, particlesArray);
+                flag = false;
+            }
+            else {
+                notInCollisions(collisions, particlesCollision);
+//                System.out.println("particle collision " + particlesCollision);
+                checkWallsAndParticles(collisions, particlesCollision);
+            }
+
             particles1 = new ArrayList<>();
             particles2 = new ArrayList<>();
-            List<ParticleCollision> collisions = new ArrayList<>(); //1: tc=3 2: tc=5 3: tc=1
 
-            checkWallsAndParticles(collisions);
             collisions.sort(ParticleCollision::compareTo);
             System.out.println("collisions " + collisions);
 
             //sacar el menor tiempo
             //updatear con EL TC ESTE DEL MENOR TIEMPO
             fraction = updatePositions(collisions.get(0).getTc() - currentTime);
-            currentTime = collisions.get(0).getTc();
-            //TODO
+//            currentTime = collisions.get(0).getTc();
+
             addFrames(collisions.get(0), frames);
 
             updateVelocity(collisions);
 
-            System.out.println("dps de updateVelocity y updatePosition " + particlesArray);
+//            System.out.println("dps de updateVelocity y updatePosition " + particlesArray);
 
             for (Particle particle : particlesArray) {
                 if (particle.getX() < 0.12) {
@@ -85,9 +93,20 @@ public class Simulator {
                     particles2.add(particle);
                 }
             }
-            System.out.println("particulas del lado derecho " + particles1.size());
-            System.out.println("particulas del lado izquierdo " + particles2.size());
+            System.out.println("particulas del lado izquierda " + particles1.size());
+            System.out.println("particulas del lado derecha " + particles2.size());
             count++;
+
+            particlesCollision = new ArrayList<>();
+            particlesCollision.add(collisions.get(0).getParticle1());
+            if(collisions.get(0).getWall() != ParticleCollision.CollisionWall.TABIQUE && collisions.get(0).getParticle2() != null)
+                particlesCollision.add(collisions.get(0).getParticle2());
+            System.out.println("las elegidas " + particlesCollision);
+
+            currentTime = collisions.get(0).getTc();
+
+            collisions = removeCollisions(collisions);
+//            System.out.println("collisions dps de borrar " + collisions);
 
 /*
             if(!eqFrac && fraction <= 0.5 + epsilon && fraction >= 0.5 - epsilon){
@@ -95,34 +114,104 @@ public class Simulator {
                 eqTime = currentTime;
             }
 */
-//            System.out.println("frames" + frames);
+        }
+    }
+
+    private static void notInCollisions(List<ParticleCollision> collisions, List<Particle> particlesCollisions) {
+        for (Particle particle: particlesArray) {
+            boolean isParticle = false;
+            for (ParticleCollision collision: collisions) {
+                if(collision.getParticle2() == null) {
+                    if (particle.getId() == collision.getParticle1().getId()) {
+                        isParticle = true;
+                    }
+                }
+                else {
+                    if (particle.getId() == collision.getParticle1().getId() || particle.getId() == collision.getParticle2().getId()) {
+                        isParticle = true;
+                    }
+                }
+            }
+            if(!isParticle) {
+                particlesCollisions.add(particle);
+            }
 
         }
     }
 
-    public static void checkWallsAndParticles(List<ParticleCollision> collisions){
-        for (Particle particle: particlesArray ) {
-            double vx = particle.getVx();
-            double vy = particle.getVy();
+    private static List<ParticleCollision> removeCollisions(List<ParticleCollision> collisions) {
+        // p1 p2
+        // p1 null
+        // p1 p2inventada
+
+        // 1  null
+        // 1  2
+
+        // 3  2
+        // 2  4
+        // 5 null
+        // 1  2
+        // 6  1
+        ParticleCollision particleCollision = collisions.get(0); //1 2
+        List<ParticleCollision> new_collision = new ArrayList<>();
+        for(ParticleCollision collision : collisions){
+            if(particleCollision.getParticle2() == null){
+                if(collision.getParticle2()==null){
+                    if (particleCollision.getParticle1().getId() == collision.getParticle1().getId() ) {
+                        continue;
+                    } else {
+                        new_collision.add(collision);
+                    }
+                }
+                else {
+                    if (particleCollision.getParticle1().getId() == collision.getParticle1().getId() || particleCollision.getParticle1().getId() == collision.getParticle2().getId()) {
+                        continue;
+                    } else {
+                        new_collision.add(collision);
+                    }
+                }
+            }
+            else {
+                if(collision.getParticle2()==null){
+                    if (particleCollision.getParticle1().getId() == collision.getParticle1().getId()) {
+                        continue;
+                    } else if (particleCollision.getParticle2().getId() == collision.getParticle1().getId()) {
+                        continue;
+                    } else {
+                        new_collision.add(collision);
+                    }
+                }
+                else {
+                    if (particleCollision.getParticle1().getId() == collision.getParticle1().getId() || particleCollision.getParticle1().getId() == collision.getParticle2().getId()) {
+                        continue;
+                    } else if (particleCollision.getParticle2().getId() == collision.getParticle1().getId() || particleCollision.getParticle2().getId() == collision.getParticle2().getId()) {
+                        continue;
+                    } else {
+                        new_collision.add(collision);
+                    }
+                }
+            }
+        }
+        return new_collision;
+    }
+
+    public static void checkWallsAndParticles(List<ParticleCollision> collisions, List<Particle> partArray ){
+        for (Particle particle: partArray) {
             Double tch = null;
             Double tcv = null;
             Double newY = null;
             ParticleCollision.CollisionWall wallh = null;
             ParticleCollision.CollisionWall wallv = null;
             //paredes verticales
-            if (vx > 0) {
-                //primera mitad
-                if (particle.getX() < width/2){     // Is in left enclosure going right. Check if collision would be with middle wall or right wall
+            if (particle.getVx() > 0) {
+                //primera mitad, veo si choca con la del medio o la de la derecha
+                if (particle.getX() < width/2){
                     tcv = (width/2 - particle.getRadio() - particle.getX()) / particle.getVx();
                     newY = (tcv * particle.getVy()) + particle.getY();
-                    //auxY > 0.5 o auxY < 0.4
-                    //height = 0.09
-                    //0.5 0.4 0.05 y 0.04
                     if(newY >= (height/2 + openingLength/2) || newY <= (height/2 - openingLength/2)){   // choca con la pared del medio
                         wallv = ParticleCollision.CollisionWall.VERTICAL;
                     }
                     else{ // pasa de largo y choca con la ultima pared
-                        //Aux < 0.5 y y > 0.4
                         if (!(newY < (height/2 + openingLength/2) && newY > (height/2 + openingLength/2 - particle.getRadio())) || (newY > (height/2 - openingLength/2) && newY < (height/2 - openingLength/2 + particle.getRadio()))) {
                             tcv = (width - particle.getRadio() - particle.getX())/particle.getVx();
                             wallv = ParticleCollision.CollisionWall.VERTICAL;
@@ -133,8 +222,11 @@ public class Simulator {
                     wallv = ParticleCollision.CollisionWall.VERTICAL;
                 }
             } else {
-                //segunda mitad
-                if (particle.getX() > width/2){     // Is in right enclosure going left. Check if collision would be with middle wall or right wall
+                //segunda mitad, veo si choca con la del medio o la izquierda
+                if (particle.getX() > width/2){
+                    if(particle.getId() == 54){
+                        System.out.println("entre");
+                    }
                     tcv = (width/2 + particle.getRadio() - particle.getX()) / particle.getVx();
                     newY = (tcv * particle.getVy()) + particle.getY();
                     if(newY >= (height/2 + openingLength/2) || newY <= (height/2 - openingLength/2)){
@@ -152,7 +244,8 @@ public class Simulator {
                 }
             }
 
-            // Check vertical collision
+
+            // paredes verticales
             if (particle.getVy() > 0){
                 tch = (height - particle.getRadio() - particle.getY()) / particle.getVy();
                 wallh = ParticleCollision.CollisionWall.HORIZONTAL;
@@ -184,18 +277,25 @@ public class Simulator {
             }
 
             Pair<Double,Particle> particletc = checkParticles(particle);
+
+            if(particle.getId()==54){
+                System.out.println("tcv " +tcv);
+                System.out.println("tch " +tch);
+                System.out.println("coordenadas de 54: " + particle.getX());
+                if(particletc!=null)System.out.println("particletc " + particletc.getKey() + " contra " + particletc.getValue().getId());
+
+            }
+
             if (particletc!=null && particletc.getKey()<0) System.out.println("particle tc: " + particletc.getKey());
             //comparo con choque con particula
             if(tc != null) {
                 if((particletc != null) && (tc > particletc.getKey())) {
-                    if (particletc.getValue() !=  particleAuxDown || particletc.getValue() != particleAuxUp ) {
-//                        System.out.println("choque de la " + particle.getId() + " con la " + particletc.getValue().getId());
+                    if (particletc.getValue().getM() != Double.POSITIVE_INFINITY ) {
                         collisions.add(new ParticleCollision(particle, particletc.getValue(), particletc.getKey() + currentTime, null));
                     } else {
                         collisions.add(new ParticleCollision(particle, particletc.getValue(), particletc.getKey() + currentTime, ParticleCollision.CollisionWall.TABIQUE));
                     }
                 } else {
-//                    System.out.println("choque de la " + particle.getId() + " con pared" );
                     collisions.add(new ParticleCollision(particle, null, tc + currentTime, wall));
                 }
             }
@@ -216,28 +316,38 @@ public class Simulator {
         double minTc = 10000;
         Pair<Double, Particle> aux = null;
         for (Particle particle2: arrayParticles) {
+
+            if (particle2.getId() == particle1.getId()){
+                continue;
+            }
+
             double tc;
 
-            double deltaX = particle2.getX() - particle1.getX();
-            double deltaY = particle2.getY() - particle1.getY();
-            double deltaVx = particle2.getVx() - particle1.getVx();
-            double deltaVy = particle2.getVy() - particle1.getVy();
+            if (particle1.getId()==54 && particle2.getId()==33  && particle1.getX() == 0.22966890361745546){
+                System.out.println("gola");
+            }
+
+            double dX = particle2.getX() - particle1.getX();
+            double dY = particle2.getY() - particle1.getY();
+            double dVx = particle2.getVx() - particle1.getVx();
+            double dVy = particle2.getVy() - particle1.getVy();
             double sigma = particle1.getRadio() + particle2.getRadio();
-            double deltaRSq = deltaX*deltaX +deltaY*deltaY;
-            double deltaVSq = deltaVx*deltaVx + deltaVy*deltaVy;
-            double deltaVdeltaR =deltaVx*deltaX + deltaVy*deltaY;
-            double d = deltaVdeltaR*deltaVdeltaR - deltaVSq * (deltaRSq - sigma*sigma);
+            double deltaRSq = dX*dX +dY*dY;
+            double deltaVSq = dVx*dVx + dVy*dVy;
+            double dVdR =dVx*dX + dVy*dY;
+            double d = dVdR*dVdR - deltaVSq * (deltaRSq - sigma*sigma);
 
             //no chocan las particulas
-            if (deltaVdeltaR >= 0 || d < 0) {
+            if (dVdR >= 0 || d < 0) {
                 continue;
             }
             else {
-                tc = - ((deltaVdeltaR + Math.sqrt(d) )/(deltaVSq));
+                tc = - ((dVdR + Math.sqrt(d) )/(deltaVSq));
                 if (tc < 0)
                     System.out.println("tc " + tc + " para la " + particle1.getId() + " con la " + particle2.getId());
                 if(tc < minTc) {        // descarto la collisiones
-                    aux = new Pair<>(tc < 0 ? 0 : tc, particle2);
+                    aux = new Pair<>(tc, particle2);
+                    minTc = tc;
                 }
             }
         }
@@ -281,59 +391,59 @@ public class Simulator {
         double vy;
         double vx;
         ParticleCollision particle = collisions.get(0);
-            Particle particle1 = particle.getParticle1();
-            //choca pared vertical
-            if(particle.getWall() == ParticleCollision.CollisionWall.VERTICAL){
-                vx = particle1.getVx();
-                particle1.setVx(-vx);
+        Particle particle1 = particle.getParticle1();
+        //choca pared vertical
+        if(particle.getWall() == ParticleCollision.CollisionWall.VERTICAL){
+            vx = particle1.getVx();
+            particle1.setVx(-vx);
+        }
+        //choca pared horizontal
+        if(particle.getWall() == ParticleCollision.CollisionWall.HORIZONTAL){
+            vy = particle1.getVy();
+            particle1.setVy(-vy);
+        }
+        //choca con corner
+        if(particle.getWall() == ParticleCollision.CollisionWall.CORNER){
+            vx = particle1.getVx();
+            vy = particle1.getVy();
+            particle1.setVy(-vy);
+            particle1.setVx(-vx);
+        }
+
+        if((particle.getWall() == null && particle.getParticle2() != null) || (particle.getWall() == ParticleCollision.CollisionWall.TABIQUE && particle.getParticle2() != null )){
+            Particle particle2 = particle.getParticle2();
+
+            double dX = particle2.getX() - particle1.getX();
+            double dY = particle2.getY() - particle1.getY();
+            double dVx = particle2.getVx() - particle1.getVx();
+            double dVy = particle2.getVy() - particle1.getVy();
+            double sigma = particle1.getRadio() + particle2.getRadio();
+            double dVdR = dVx * dX + dVy * dY;
+            double J;
+            if(particle2.getM() == Double.POSITIVE_INFINITY ){ // si son las del tabique
+                J = (2  * dVdR) / (sigma);
             }
-            //choca pared horizontal
-            if(particle.getWall() == ParticleCollision.CollisionWall.HORIZONTAL){
-                vy = particle1.getVy();
-                particle1.setVy(-vy);
-            }
-            //choca con corner
-            if(particle.getWall() == ParticleCollision.CollisionWall.CORNER){
-                vx = particle1.getVx();
-                vy = particle1.getVy();
-                particle1.setVy(-vy);
-                particle1.setVx(-vx);
+            else {
+                J = (2 * (particle1.getM() * particle2.getM()) * dVdR) / (sigma * (particle1.getM() + particle2.getM()));
             }
 
-            if((particle.getWall() == null && particle.getParticle2() != null) || (particle.getWall() == ParticleCollision.CollisionWall.TABIQUE && particle.getParticle2() != null )){
-                Particle particle2 = particle.getParticle2();
+            double Jx = (J * dX) / sigma;
+            double Jy = (J * dY) / sigma;
 
-                double deltaX = particle2.getX() - particle1.getX();
-                double deltaY = particle2.getY() - particle1.getY();
-                double deltaVx = particle2.getVx() - particle1.getVx();
-                double deltaVy = particle2.getVy() - particle1.getVy();
-                double sigma = particle1.getRadio() + particle2.getRadio();
-                double deltaVdeltaR = deltaVx * deltaX + deltaVy * deltaY;
-                double J;
-                if(particle2.getM() == Double.POSITIVE_INFINITY ){ // si son las del tabique
-                    J = (2 * particle1.getM() * deltaVdeltaR) / (sigma);
-                }
-                else {
-                    J = (2 * (particle1.getM() * particle2.getM()) * deltaVdeltaR) / (sigma * (particle1.getM() + particle2.getM()));
-                }
+            double Vx1 = particle1.getVx() + (Jx / particle1.getM());
+            double Vy1 = particle1.getVy() + (Jy / particle1.getM());
 
-                double Jx = (J * deltaX) / sigma;
-                double Jy = (J * deltaY) / sigma;
+            particle1.setVx(Vx1);
+            particle1.setVy(Vy1);
 
-                double Vx1 = particle1.getVx() + (Jx / particle1.getM());
-                double Vy1 = particle1.getVy() + (Jy / particle1.getM());
+            if(!(particle2.getM() == Double.POSITIVE_INFINITY )) { // si son las del tabique
 
-                particle1.setVx(Vx1);
-                particle1.setVy(Vy1);
+                double Vx2 = particle2.getVx() - (Jx / particle2.getM());
+                double Vy2 = particle2.getVy() - (Jy / particle2.getM());
 
-                if(!(particle2.getM() == Double.POSITIVE_INFINITY )) { // si son las del tabique
-
-                    double Vx2 = particle2.getVx() - (Jx / particle2.getM());
-                    double Vy2 = particle2.getVy() - (Jy / particle2.getM());
-
-                    particle2.setVx(Vx2);
-                    particle2.setVy(Vy2);
-                }
+                particle2.setVx(Vx2);
+                particle2.setVy(Vy2);
             }
+        }
     }
 }
