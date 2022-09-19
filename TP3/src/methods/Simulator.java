@@ -1,7 +1,7 @@
 package methods;
 
-import javafx.util.Pair;
 import utils.GeneratorFiles;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +12,10 @@ public class Simulator {
     public static int time = 0;
     public static double height = 0.09;
     public static double width = 0.24;;
-    public static double tabiqueUp = 0.05;
-    public static double tabiqueDown = 0.04;
-    public static double tabiqueLength = 0.01;
+    //height/2 + tabiqueLength/2) || newY <= (height/2 - tabiqueLength/2
+    public static double tabiqueLength = 0.04;
+    public static double tabiqueUp = height/2 + tabiqueLength/2;
+    public static double tabiqueDown = height/2 - tabiqueLength/2;
 
     public static double currentTime = 0;
 
@@ -48,14 +49,15 @@ public class Simulator {
         double epsilon = 0.05;
         List<ParticleCollision> collisions = new ArrayList<>();
 
-        while (!fractionBreak || (currentTime < fractionTime*2)) {
-//        while(count < 3000) {
+        while (!fractionBreak) {
+        //while(count < 10000) {
 
             System.out.println("---------------------------- ITERACION " + count + " -----------------------------------");
 
             if(flag){ //primera vez
+                collisions = new ArrayList<>();
                 checkWallsAndParticles(collisions, particlesArray);
-                flag = false;
+                //flag = false;
             }
             else {
                 notInCollisions(collisions, particlesCollision);
@@ -88,17 +90,17 @@ public class Simulator {
             System.out.println("particulas del lado derecha " + particles2.size());
             count++;
 
-            particlesCollision = new ArrayList<>();
+            /*particlesCollision = new ArrayList<>();
             particlesCollision.add(collisions.get(0).getParticle1());
             if(collisions.get(0).getWall() != ParticleCollision.CollisionWall.TABIQUE && collisions.get(0).getParticle2() != null)
                 particlesCollision.add(collisions.get(0).getParticle2());
-            System.out.println("las elegidas " + particlesCollision);
+            System.out.println("las elegidas " + particlesCollision);*/
 
             currentTime += ( collisions.get(0).getTc() - currentTime);
             System.out.println("current time " + currentTime);
 
-            collisions = removeCollisions(collisions);
-            System.out.println("collisions dps de borrar " + collisions);
+           /* collisions = removeCollisions(collisions, particlesCollision);
+            System.out.println("collisions dps de borrar " + collisions);*/
 
             fraction = particles1.size()/(double) N;
             System.out.println("fraction " + fraction);
@@ -133,7 +135,7 @@ public class Simulator {
         }
     }
 
-    private static List<ParticleCollision> removeCollisions(List<ParticleCollision> collisions) {
+    private static List<ParticleCollision> removeCollisions(List<ParticleCollision> collisions, List<Particle> particles) {
         // p1 p2
         // p1 null
         // p1 p2inventada
@@ -353,7 +355,8 @@ public class Simulator {
                 tc = - ((dVdR + Math.sqrt(d) )/(deltaVSq));
                 if (tc < 0)
                     System.out.println("tc " + tc + " para la " + particle1.getId() + " con la " + particle2.getId());
-                if(tc < minTc) {        // descarto la collisiones
+
+                if(tc < minTc && tc >= 0) {        // descarto la collisiones
                     aux = new Pair<>(tc, particle2);
                     minTc = tc;
                 }

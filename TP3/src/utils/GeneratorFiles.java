@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class GeneratorFiles {
 
-    static int N = 50;
+    static int N = 100;
     static double width = 0.24;
     static double height = 0.09;
     static double r = 0.0015;
@@ -21,7 +21,7 @@ public class GeneratorFiles {
 
     public static void main(String[] args) {
         try {
-            FileWriter myWriter = new FileWriter("./dynamic_50_1.txt");
+            FileWriter myWriter = new FileWriter("./dynamic_100_4.txt");
             myWriter.write("   0\n");
 
             while(particles.size() != N){
@@ -49,7 +49,7 @@ public class GeneratorFiles {
         }
 
         try {
-            FileWriter myWriter = new FileWriter("./static_50_1.txt");
+            FileWriter myWriter = new FileWriter("./static_100_4.txt");
             //r v m angle
             final Random random = new Random();
             myWriter.write("   " + N +"\n");
@@ -98,7 +98,7 @@ public class GeneratorFiles {
     public static void outputFrames(List<ArrayList<Double>> frames){
         //x y vx vy
         try {
-            FileWriter myWriter = new FileWriter("./frames_100_1.txt");
+            FileWriter myWriter = new FileWriter("./frames_100_4.txt");
             int frameNum = 0;
             int count = 0;
             for (ArrayList<Double> frame : frames) {
@@ -107,20 +107,6 @@ public class GeneratorFiles {
                 }
                 else if(frame.size() == 1){
                     myWriter.write(String.format("%g\n", frame.get(0)));
-//                    if(frame.get(1)==1){   //choco pared
-//                        Double d1 = frame.get(2);
-//                        Integer id1 = d1.intValue();
-//                        Double d2 = frame.get(3);
-//                        Integer id2 = d2.intValue();
-//                        myWriter.write(String.format("%s\t%d\t%d\n\n", "WC", id1, id2));
-//                    }
-//                    else{   //choco particula
-//                        Double d1 = frame.get(2);
-//                        Integer id1 = d1.intValue();
-//                        Double d2 = frame.get(3);
-//                        Integer id2 = d2.intValue();
-//                        myWriter.write(String.format("%s\t%d\t%d\n\n", "PC", id1, id2));
-//                    }
                     continue;
 
                 } else {
@@ -131,11 +117,25 @@ public class GeneratorFiles {
                 count++;
             }
             myWriter.close();
-            System.out.println("Successfully wrote frames_100_1.txt.");
+            System.out.println("Successfully wrote frames_100_4.txt.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
 
+    public static void outputFp(List<ArrayList<Double>> fp) {
+        try {
+            FileWriter myWriter = new FileWriter("./fp_100_4.txt");
+            for (ArrayList<Double> frame : fp) {
+                myWriter.write(frame.get(0) + "\t" + frame.get(1) + "\n");
+            }
+            myWriter.close();
+            System.out.println("Successfully wrote fp_100_4.txt.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+    }
 }
