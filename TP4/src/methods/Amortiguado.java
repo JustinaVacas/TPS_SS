@@ -25,9 +25,8 @@ public class Amortiguado {
 
         List<ArrayList<Double>> finalStates = new ArrayList<>();
         finalStates = verlet(particle,dT);
-//        finalStates = beeman(particle,dT);
+        finalStates = beeman(particle,dT);
 //        finalStates = gear(particle, dT);
-        System.out.println(finalStates);
         GeneratorFiles.outputStates(finalStates);
     }
 
@@ -122,10 +121,10 @@ public class Amortiguado {
         List<Double> derivatives = new ArrayList<>();
         derivatives.add(particle.getX());
         derivatives.add(particle.getVx());
-        derivatives.add(force / particle.getM());
-        derivatives.add((-k *derivatives.get(1) - gamma*derivatives.get(2))/particle.getM());
-        derivatives.add((-k *derivatives.get(2) - gamma*derivatives.get(3))/particle.getM());
-        derivatives.add((-k *derivatives.get(3) - gamma*derivatives.get(4))/particle.getM());
+        derivatives.add(force/m);
+        derivatives.add((-k *derivatives.get(1) - gamma*derivatives.get(2))/m);
+        derivatives.add((-k *derivatives.get(2) - gamma*derivatives.get(3))/m);
+        derivatives.add((-k *derivatives.get(3) - gamma*derivatives.get(4))/m);
 
         while(t <= tf) {
             // me guardo el estado
@@ -138,10 +137,11 @@ public class Amortiguado {
             //predicciones
             List<Double> newDerivatives = gearPredictor(derivatives, dT);
             //evaluar
-            dA = (-k*newDerivatives.get(0) - gamma*newDerivatives.get(1))/particle.getM() - newDerivatives.get(2);
+            dA = (-k*newDerivatives.get(0) - gamma*newDerivatives.get(1))/m - newDerivatives.get(2);
             dR2 = dA * dT*dT / 2;
             //correccion
             derivatives = gearCorrector(newDerivatives, dT, alpha, dR2);
+            //TODO lo pisara bien?
 
             particle.setX(derivatives.get(0));
             particle.setVx(derivatives.get(1));
@@ -183,8 +183,8 @@ public class Amortiguado {
 
     public static List<Double> gearPredictor(List<Double> der, double dT){
         List<Double> newDerivatives = new ArrayList<>();
-        newDerivatives.add(der.get(0) + der.get(1) * dT + der.get(2)*dT*dT/2 + der.get(3)*dT*dT*dT/6 + der.get(4));
-        newDerivatives.add(der.get(1) + der.get(2)*dT + der.get(3)*dT*dT/2 + der.get(4)*dT*dT*dT/6 + der.get(5));
+        newDerivatives.add(der.get(0) + der.get(1)*dT + der.get(2)*dT*dT/2 + der.get(3)*dT*dT*dT/6 + der.get(4)*dT*dT*dT*dT/24 + der.get(5)*dT*dT*dT*dT*dT/120);
+        newDerivatives.add(der.get(1) + der.get(2)*dT + der.get(3)*dT*dT/2 + der.get(4)*dT*dT*dT/6 + der.get(5)*dT*dT*dT*dT/24);
         newDerivatives.add(der.get(2) + der.get(3)*dT + der.get(4)*dT*dT/2 + der.get(5)*dT*dT*dT/6);
         newDerivatives.add(der.get(3) + der.get(4)*dT + der.get(5)*dT*dT/2);
         newDerivatives.add(der.get(4) + der.get(5)*dT);
@@ -194,13 +194,12 @@ public class Amortiguado {
 
     public static List<Double> gearCorrector(List<Double> der, double dT, double[] alpha, double dR2){
         List<Double> newDerivatives = new ArrayList<>();
-        int[] n = {1, 2, 3, 4 ,5, 6};
-        newDerivatives.add(der.get(0) + (alpha[0] * dR2 * n[0]) / (dT*dT));
-        newDerivatives.add(der.get(1) + (alpha[1] * dR2 * n[1]) / (dT*dT));
-        newDerivatives.add(der.get(2) + (alpha[2] * dR2 * n[2]) / (dT*dT));
-        newDerivatives.add(der.get(3) + (alpha[3] * dR2 * n[3]) / (dT*dT));
-        newDerivatives.add(der.get(4) + (alpha[4] * dR2 * n[4]) / (dT*dT));
-        newDerivatives.add(der.get(5) + (alpha[5] * dR2 * n[5]) / (dT*dT));
+        newDerivatives.add(der.get(0) + (alpha[0] * dR2 * 1));
+        newDerivatives.add(der.get(1) + (alpha[1] * dR2 * 1) / (dT));
+        newDerivatives.add(der.get(2) + (alpha[2] * dR2 * 2) / (dT*dT));
+        newDerivatives.add(der.get(3) + (alpha[3] * dR2 * 6) / (dT*dT*dT));
+        newDerivatives.add(der.get(4) + (alpha[4] * dR2 * 24) / (dT*dT*dT*dT));
+        newDerivatives.add(der.get(5) + (alpha[5] * dR2 * 120) / (dT*dT*dT*dT*dT));
         return newDerivatives;
     }
     
