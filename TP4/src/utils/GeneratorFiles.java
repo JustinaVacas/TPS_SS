@@ -9,12 +9,12 @@ public class GeneratorFiles {
 
     public static void outputStates(List<ArrayList<Double>> frames){
         try {
-            FileWriter myWriter = new FileWriter("./statesBeeman.txt");
+            FileWriter myWriter = new FileWriter("./statesGear_1.txt");
             for (ArrayList<Double> frame : frames) {
                 myWriter.write(frame.get(0) + "\t" + frame.get(1) + "\t" + frame.get(2) + "\n");
             }
             myWriter.close();
-            System.out.println("Successfully wrote statesBeeman.txt.");
+            System.out.println("Successfully wrote statesGear_1.txt.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();

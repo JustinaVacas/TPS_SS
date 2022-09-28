@@ -21,7 +21,7 @@ public class GeneratorFiles {
 
     public static void main(String[] args) {
         try {
-            FileWriter myWriter = new FileWriter("./dynamic_100_4.txt");
+            FileWriter myWriter = new FileWriter("./dynamic_100_1.txt");
             myWriter.write("   0\n");
 
             while(particles.size() != N){
@@ -49,7 +49,7 @@ public class GeneratorFiles {
         }
 
         try {
-            FileWriter myWriter = new FileWriter("./static_100_4.txt");
+            FileWriter myWriter = new FileWriter("./static_100_1.txt");
             //r v m angle
             final Random random = new Random();
             myWriter.write("   " + N +"\n");
@@ -98,7 +98,7 @@ public class GeneratorFiles {
     public static void outputFrames(List<ArrayList<Double>> frames){
         //x y vx vy
         try {
-            FileWriter myWriter = new FileWriter("./frames_100_4.txt");
+            FileWriter myWriter = new FileWriter("./frames_100_1.txt");
             int frameNum = 0;
             int count = 0;
             for (ArrayList<Double> frame : frames) {
@@ -117,7 +117,7 @@ public class GeneratorFiles {
                 count++;
             }
             myWriter.close();
-            System.out.println("Successfully wrote frames_100_4.txt.");
+            System.out.println("Successfully wrote frames_100_1.txt.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -126,12 +126,12 @@ public class GeneratorFiles {
 
     public static void outputFp(List<ArrayList<Double>> fp) {
         try {
-            FileWriter myWriter = new FileWriter("./fp_100_4.txt");
+            FileWriter myWriter = new FileWriter("./fp_100_1.txt");
             for (ArrayList<Double> frame : fp) {
                 myWriter.write(frame.get(0) + "\t" + frame.get(1) + "\n");
             }
             myWriter.close();
-            System.out.println("Successfully wrote fp_100_4.txt.");
+            System.out.println("Successfully wrote fp_100_1.txt.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();

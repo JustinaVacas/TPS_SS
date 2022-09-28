@@ -54,29 +54,9 @@ public class ParticleCollision implements Comparable<ParticleCollision>{
         this.wall = wall;
     }
 
-    private boolean checkTypeAndParticles(final ParticleCollision collision) {
-        return ((Objects.equals(particle1, collision.particle1) && Objects.equals(particle2, collision.particle2))
-                ||
-                (Objects.equals(particle1, collision.particle2) && Objects.equals(particle2, collision.particle1))
-        )
-                && wall == collision.wall;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ParticleCollision collision = (ParticleCollision) o;
-        return checkTypeAndParticles(collision);
-    }
-
     @Override
     public int compareTo(ParticleCollision o) {
-        int result = Double.compare(tc, o.tc);
-//        if (result == 0) {
-//            return checkTypeAndParticles(o) ? 0 : 1;
-//        }
-        return result;
+        return Double.compare(tc, o.tc);
     }
 
     @Override

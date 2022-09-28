@@ -47,7 +47,7 @@ def get_particle_data(frame_file):
             ll = line.split()
             line_info = []
             for index in ll:
-                line_info.append(float(index))
+                line_info.append(float(index.replace(',', '')))
             if len(line_info) > 1:
                 frame_lines.append(line_info)
             elif len(line_info) == 1:

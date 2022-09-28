@@ -16,17 +16,17 @@ public class Amortiguado {
     public static double r = 1;
     // v = -A*gama/2*m
 
-    //TODO revisar vx inicial, condicion de corte, t!=0 para verlet
+    //TODO condicion de corte, t!=0 para verlet
 
     public static void main(String[] args) {
 
-        double dT = 1;
+        double dT = 0.1;
         Particle particle = new Particle(1,0,-(100.0 / 140),0,m);
 
         List<ArrayList<Double>> finalStates = new ArrayList<>();
-        finalStates = verlet(particle,dT);
-        finalStates = beeman(particle,dT);
-//        finalStates = gear(particle, dT);
+//        finalStates = verlet(particle,dT);
+//        finalStates = beeman(particle,dT);
+        finalStates = gear(particle, dT);
         GeneratorFiles.outputStates(finalStates);
     }
 
@@ -67,7 +67,7 @@ public class Amortiguado {
         return states;
     }
 
-    public static List<ArrayList<Double>> beeman(Particle particle,double dT){
+    public static List<ArrayList<Double>> beeman(Particle particle, double dT){
 
         double force = -k*particle.getX() - gamma*particle.getVx();
         double xBefore = eulerX(particle.getX(), particle.getVx(),-dT,force,m);
@@ -76,6 +76,7 @@ public class Amortiguado {
 
         double x;
         double v;
+        double newV;
         double t = 0;
         double aAfter;
         List<ArrayList<Double>> states = new ArrayList<>();
@@ -91,18 +92,18 @@ public class Amortiguado {
             // x
             force = -k*particle.getX() - gamma*particle.getVx();
             x = beemanX(particle.getX(), particle.getVx(), force/m,aBefore,dT);
-            // v
+            // v prediccion
             force = -k*x - gamma*particle.getVx();
             v = beemanVPredicted(particle.getVx(),force/m,aBefore,dT);
-            aAfter = (-k*x- gamma*v)/m;
-
+            aAfter = (-k*x - gamma*v)/m;
+            // v correcto
             force = -k* particle.getX() - gamma*particle.getVx();
-            v = beemanVCorrected(particle.getVx(),aBefore,force/m,aAfter,dT);
+            newV = beemanVCorrected(particle.getVx(),aBefore,force/m,aAfter,dT);
 
             aBefore = (-k*particle.getX() - gamma*particle.getVx())/m;
 
             //update
-            particle.setVx(v);
+            particle.setVx(newV);
             particle.setX(x);
             t += dT;
         }
@@ -157,7 +158,6 @@ public class Amortiguado {
     }
 
     public static double eulerV(double v, double f, double m, double dT){
-
         return v + dT * f / m;
     }
 
@@ -169,8 +169,8 @@ public class Amortiguado {
         return (xAfter - xBefore) / (2 * dT);
     }
 
-    public static double beemanX(double x, double v, double a1, double aBefore, double dT) {
-        return x + v * dT + (double)(2/3)*a1*dT*dT-(double)(1/6)*aBefore*dT*dT;
+    public static double beemanX(double x, double v, double a, double aBefore, double dT) {
+        return x + v * dT + (double)(2/3)*a*dT*dT-(double)(1/6)*aBefore*dT*dT;
     }
 
     public static double beemanVCorrected(double v,double aBefore, double a, double aAfter, double dT ) {

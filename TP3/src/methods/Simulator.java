@@ -11,9 +11,10 @@ public class Simulator {
     public static int N = 0;
     public static int time = 0;
     public static double height = 0.09;
-    public static double width = 0.24;;
-    //height/2 + tabiqueLength/2) || newY <= (height/2 - tabiqueLength/2
-    public static double tabiqueLength = 0.04;
+    public static double width = 0.24;
+    public static double height2 = height/2;
+    public static double tabiqueLength = 0.01;
+    public static double tab = tabiqueLength/2;
     public static double tabiqueUp = height/2 + tabiqueLength/2;
     public static double tabiqueDown = height/2 - tabiqueLength/2;
 
@@ -71,8 +72,6 @@ public class Simulator {
             collisions.sort(ParticleCollision::compareTo);
             System.out.println("collisions " + collisions);
 
-            //sacar el menor tiempo
-            //updatear con EL TC ESTE DEL MENOR TIEMPO
             updatePositions(collisions.get(0).getTc() - currentTime);
 
             addFrames(collisions.get(0), frames);
@@ -136,25 +135,8 @@ public class Simulator {
     }
 
     private static List<ParticleCollision> removeCollisions(List<ParticleCollision> collisions, List<Particle> particles) {
-        // p1 p2
-        // p1 null
-        // p1 p2inventada
 
-
-        // 1  2
-
-        // 3  2
-        // 2  4
-        // 5 null
-        // 1  2
-        // 6  1
-
-
-        // 93  null
-
-        // 54  null
-        // 23  54
-        ParticleCollision particleCollision = collisions.get(0); //1 2
+        ParticleCollision particleCollision = collisions.get(0);
         List<ParticleCollision> new_collision = new ArrayList<>();
         for(ParticleCollision collision : collisions){
             if( particleCollision.getParticle2() == null || particleCollision.getParticle2().getM() == Double.POSITIVE_INFINITY){
@@ -208,16 +190,13 @@ public class Simulator {
             if (particle.getVx() > 0) {
                 //primera mitad, veo si choca con la del medio o la de la derecha
                 if (particle.getX() < width/2){
-                    if(particle.getId()==45 && particle.getX()== 0.1340432624905601){
-                        System.out.println("soy la 45");
-                    }
                     tcv = (width/2 - particle.getRadio() - particle.getX()) / particle.getVx();
                     newY = (tcv * particle.getVy()) + particle.getY();
-                    if(newY >= (height/2 + tabiqueLength/2) || newY <= (height/2 - tabiqueLength/2)){   // choca con la pared del medio
+                    if(newY >= (height2 + tab) || newY <= (height2 - tab)){   // choca con la pared del medio
                         wallv = ParticleCollision.CollisionWall.VERTICAL;
                     }
                     else{ // pasa de largo y choca con la ultima pared
-                        if (!(newY < (height/2 + tabiqueLength/2) && newY > (height/2 + tabiqueLength/2 - particle.getRadio())) || (newY > (height/2 - tabiqueLength/2) && newY < (height/2 - tabiqueLength/2 + particle.getRadio()))) {
+                        if (!(newY < (height2+ tab) && newY > (height2 + tab - particle.getRadio())) || (newY > (height2 - tab) && newY < (height2 - tab + particle.getRadio()))) {
                             tcv = (width - particle.getRadio() - particle.getX())/particle.getVx();
                             wallv = ParticleCollision.CollisionWall.VERTICAL;
                         }
@@ -232,11 +211,11 @@ public class Simulator {
                 if (particle.getX() > width/2){
                     tcv = (width/2 + particle.getRadio() - particle.getX()) / particle.getVx();
                     newY = (tcv * particle.getVy()) + particle.getY();
-                    if(newY >= (height/2 + tabiqueLength/2) || newY <= (height/2 - tabiqueLength/2)){
+                    if(newY >= (height2 + tab) || newY <= (height2 - tab)){
                         wallv = ParticleCollision.CollisionWall.VERTICAL;
                     }
                     else{
-                        if (!(newY < (height/2 + tabiqueLength/2) && newY > (height/2 + tabiqueLength/2 - particle.getRadio())) || (newY > (height/2 - tabiqueLength/2) && newY < (height/2 - tabiqueLength/2 + particle.getRadio()))) {
+                        if (!(newY < (height2 + tab) && newY > (height2 + tab - particle.getRadio())) || (newY > (height2 - tab) && newY < (height2 - tab + particle.getRadio()))) {
                             tcv = (particle.getRadio() - particle.getX()) / particle.getVx();
                             wallv = ParticleCollision.CollisionWall.VERTICAL;
                         }
@@ -300,7 +279,7 @@ public class Simulator {
 
             }
 
-            if (particletc!=null && particletc.getKey()<0) System.out.println("particle tc: " + particletc.getKey());
+            //if (particletc!=null && particletc.getKey()<0) System.out.println("particle tc: " + particletc.getKey());
             //comparo con choque con particula
             if(tc != null) { //tc  = tcv o tch
                 if((particletc != null) && (tc > particletc.getKey())) {
