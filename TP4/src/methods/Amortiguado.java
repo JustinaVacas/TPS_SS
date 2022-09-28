@@ -20,13 +20,13 @@ public class Amortiguado {
 
     public static void main(String[] args) {
 
-        double dT = 0.1;
+        double dT = 0.005;
         Particle particle = new Particle(1,0,-(100.0 / 140),0,m);
 
         List<ArrayList<Double>> finalStates = new ArrayList<>();
 //        finalStates = verlet(particle,dT);
-//        finalStates = beeman(particle,dT);
-        finalStates = gear(particle, dT);
+        finalStates = beeman(particle,dT);
+//        finalStates = gear(particle, dT);
         GeneratorFiles.outputStates(finalStates);
     }
 
@@ -170,15 +170,15 @@ public class Amortiguado {
     }
 
     public static double beemanX(double x, double v, double a, double aBefore, double dT) {
-        return x + v * dT + (double)(2/3)*a*dT*dT-(double)(1/6)*aBefore*dT*dT;
+        return x + v * dT + (2f/3)*a*dT*dT-(1f/6)*aBefore*dT*dT;
     }
 
     public static double beemanVCorrected(double v,double aBefore, double a, double aAfter, double dT ) {
-        return v + (double)(1/3)*aAfter*dT + (double)(5/6)*a*dT - (double)(1/6)*aBefore*dT;
+        return v + (1f/3)*aAfter*dT + (5f/6)*a*dT - (1f/6)*aBefore*dT;
     }
 
     public static double beemanVPredicted(double v, double a, double aBefore, double dT) {
-        return v + (double)(3/2)*a*dT - (double)(1/2)*aBefore*dT;
+        return v + (3f/2)*a*dT - (1f/2)*aBefore*dT;
     }
 
     public static List<Double> gearPredictor(List<Double> der, double dT){

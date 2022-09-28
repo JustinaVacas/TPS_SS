@@ -59,7 +59,7 @@ public class Particle {
     @Override
     public String toString() {
         return "methods.Particle{" +
-                ", vx = " + vx +
+                "vx = " + vx +
                 ", vy = " + vy +
                 ", m= " + m +
                 ", x= " + x +
