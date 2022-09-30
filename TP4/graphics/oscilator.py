@@ -2,22 +2,21 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 A = 1.0
-M = 70.0
-K = 10000
-GAMMA = 100.0
+m = 70.0
+k = 10000
+gamma = 100.0
 
 
 def calculate(t):
-    return A * (np.exp(-(GAMMA/(2*M)) * t)) * (np.cos(np.power((K/M) - (GAMMA*GAMMA/(4*(M*M))), 0.5) * t))
+    return A * (np.exp(-(gamma / (2 * m)) * t)) * (np.cos(np.power((k / m) - (gamma * gamma / (4 * (m * m))), 0.5) * t))
 
 
 def drawAll(verlet, gear):
     positionsVerlet = np.array(verlet[1])
     timesVerlet = np.array(verlet[2])
-#    positionsBeeman = np.array(beeman[1])
-#    timesBeeman = np.array(beeman[2])
+    #    positionsBeeman = np.array(beeman[1])
+    #    timesBeeman = np.array(beeman[2])
     positionsGear = np.array(gear[1])
     timesGear = np.array(gear[2])
     real_positions = np.array(verlet[0])
@@ -32,7 +31,6 @@ def drawAll(verlet, gear):
 
 
 def drawAllZoom(verlet, gear):
-
     positionsVerlet = np.array(verlet[1])
     timesVerlet = np.array(verlet[2])
     #    positionsBeeman = np.array(beeman[1])
@@ -49,8 +47,8 @@ def drawAllZoom(verlet, gear):
     plt.legend(["Verlet", "Gear", "Analitico"])
     delta = 1e-2
     to = 3.1545
-    plt.xlim(to, to+delta)
-    y = (calculate(to), calculate(to+delta))
+    plt.xlim(to, to + delta)
+    y = (calculate(to), calculate(to + delta))
     plt.ylim(min(y), max(y))
     plt.show()
 
@@ -92,4 +90,3 @@ if __name__ == '__main__':
     draw([r, position, time])
     drawAll([r, position, time], [r2, position2, time2])
     drawAllZoom([r, position, time], [r2, position2, time2])
-
