@@ -202,6 +202,5 @@ public class Amortiguado {
         newDerivatives.add(der.get(5) + (alpha[5] * dR2 * 120) / (dT*dT*dT*dT*dT));
         return newDerivatives;
     }
-    
 
 }

@@ -16,6 +16,14 @@ public class Planet {
         this.r = r;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public double getR() {
         return r;
     }
@@ -67,7 +75,8 @@ public class Planet {
     @Override
     public String toString() {
         return "methods.Planet{" +
-                "r= " + r +
+                "id = " + id +
+                ", r = " + r +
                 ", m= " + m +
                 ", x= " + x +
                 ", y= " + y +
