@@ -109,6 +109,7 @@ public class VenusMission {
                 ArrayList<Double> velocities = currentRs.get(p.getId()).get(1);
 
                 state.add(t);
+                state.add((double) p.getId());
                 state.add(position.get(0));
                 state.add(position.get(1));
                 state.add(velocities.get(0));
@@ -124,9 +125,6 @@ public class VenusMission {
 
             //correccion
             currentRs = gearCorrector(newDerivatives, dT, alpha, deltasR2);
-
-            System.out.println("currentRs: " + currentRs);
-
 
             t += dT;
         }

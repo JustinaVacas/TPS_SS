@@ -15,7 +15,7 @@ public class GeneratorFiles {
                     myWriter.write(frame.get(0) + "\n");
                     count = 0;
                 }
-                myWriter.write(frame.get(1) + "\t" + frame.get(2) + "\t" + frame.get(3) + "\t" + frame.get(4) + "\n");
+                myWriter.write(frame.get(1) + "\t" + frame.get(2) + "\t" + frame.get(3) + "\t" + frame.get(4) + "\t" + frame.get(5) + "\n");
                 count++;
             }
             myWriter.close();
