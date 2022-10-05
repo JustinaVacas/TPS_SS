@@ -35,7 +35,7 @@ def get_particle_data(frame_file, step):
     static_df.append(3000)
     static_df.append(1000)
     static_df.append(800)
-    static_df.append(700)
+    static_df.append(300)
 
     static = pd.DataFrame(np.array(static_df), columns=["radius"])
 
