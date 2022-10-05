@@ -12,39 +12,44 @@ def calculate(t):
     return A * (np.exp(-(gamma / (2 * m)) * t)) * (np.cos(np.power((k / m) - (gamma * gamma / (4 * (m * m))), 0.5) * t))
 
 
-def drawAll(verlet, gear):
+def drawAll(verlet, gear, beeman):
     positionsVerlet = np.array(verlet[1])
     timesVerlet = np.array(verlet[2])
-    #    positionsBeeman = np.array(beeman[1])
-    #    timesBeeman = np.array(beeman[2])
+    positionsBeeman = np.array(beeman[1])
+    timesBeeman = np.array(beeman[2])
+    positionsBeeman = np.array(beeman[1])
+    timesBeeman = np.array(beeman[2])
     positionsGear = np.array(gear[1])
     timesGear = np.array(gear[2])
     real_positions = np.array(verlet[0])
 
     plt.plot(timesVerlet, positionsVerlet)
     plt.plot(timesGear, positionsGear)
+    plt.plot(timesBeeman, positionsBeeman)
     plt.plot(timesVerlet, real_positions)
     plt.xlabel("Tiempo (s)")
     plt.ylabel("Posicion (m)")
-    plt.legend(["Verlet", "Gear", "Analitico"])
+    plt.legend(["Verlet", "Gear", "Beeman", "Analitico"])
     plt.show()
 
 
-def drawAllZoom(verlet, gear):
+def drawAllZoom(verlet, gear, beeman):
+
     positionsVerlet = np.array(verlet[1])
     timesVerlet = np.array(verlet[2])
-    #    positionsBeeman = np.array(beeman[1])
-    #    timesBeeman = np.array(beeman[2])
+    positionsBeeman = np.array(beeman[1])
+    timesBeeman = np.array(beeman[2])
     positionsGear = np.array(gear[1])
     timesGear = np.array(gear[2])
     real_positions = np.array(verlet[0])
 
     plt.plot(timesVerlet, positionsVerlet)
     plt.plot(timesGear, positionsGear)
+    plt.plot(timesBeeman, positionsBeeman)
     plt.plot(timesVerlet, real_positions, ".")
     plt.xlabel("Tiempo (s)")
     plt.ylabel("Posicion (m)")
-    plt.legend(["Verlet", "Gear", "Analitico"])
+    plt.legend(["Verlet", "Gear", "Beeman", "Analitico"])
     delta = 1e-2
     to = 3.1545
     plt.xlim(to, to + delta)
@@ -73,6 +78,7 @@ def parseParameters(file):
     r = []
     time = []
     position = []
+    error = 0
     for line in statesLines:
         newline = line.strip()
         split = newline.split()
@@ -81,12 +87,21 @@ def parseParameters(file):
             r.append(aux)
             position.append(float(split[1]))
             time.append(float(split[0]))
-    return r, position, time
+
+    for x, y in zip(r, position):
+        error = error + (y - x) ** 2
+    return r, position, time, error
 
 
 if __name__ == '__main__':
-    r, position, time = parseParameters(sys.argv[1])
-    r2, position2, time2 = parseParameters(sys.argv[2])
+    r, position, time, errorV = parseParameters(sys.argv[1])
+    r2, position2, time2, errorG = parseParameters(sys.argv[2])
+    r3, position3, time3, errorB = parseParameters(sys.argv[3])
     draw([r, position, time])
-    drawAll([r, position, time], [r2, position2, time2])
-    drawAllZoom([r, position, time], [r2, position2, time2])
+    drawAll([r, position, time], [r2, position2, time2], [r3, position3, time3])
+    drawAllZoom([r, position, time], [r2, position2, time2], [r3, position3, time3])
+    print("Error cuadratico Verlet: ", errorV)
+    print("Error cuadratico Gear: ", errorG)
+    print("Error cuadratico Beeman: ", errorB)
+
+

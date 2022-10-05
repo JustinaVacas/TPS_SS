@@ -25,7 +25,7 @@ public class VenusMission {
 
         System.out.println("elementos: " + planetsArray);
 
-        Rs = initialR();
+        Rs = initialRs();
 
         System.out.println("Rs: " + Rs);
 
@@ -44,11 +44,11 @@ public class VenusMission {
         double ry = (tierra.getY() - sol.getY()) / d;
         double oX = -ry; //componentes tangenciales a las orbitas
         double oY = rx;
-        double naveX = dEstacionEspacial * -rx + tierra.getX() + tierra.getR();
-        double naveY = dEstacionEspacial * -ry + tierra.getY() + tierra.getR();
-        double vTierra = -7.12 - 8 + tierra.getVx() * oX + tierra.getVy() * oY;
-        double naveVx = oX * vTierra;
-        double naveVy = oY * vTierra;
+        double naveX = (dEstacionEspacial + tierra.getR()) * -rx + tierra.getX();
+        double naveY = (dEstacionEspacial + tierra.getR()) * -ry + tierra.getY();
+        double vT = -7.12 - 8 + tierra.getVx() * oX + tierra.getVy() * oY;
+        double naveVx = oX * vT;
+        double naveVy = oY * vT;
 
         Planet nave = new Planet(3, 1, mNave);
         nave.setX(naveX);
@@ -132,7 +132,7 @@ public class VenusMission {
     }
 
     public static List<List<ArrayList<Double>>> gearPredictor(List<List<ArrayList<Double>>> der, double dT){
-//       [ [ [r0x r0y] [r1x r1y] ] [ [r2x r2y] [r3x r3y] ] ]
+//       [ Sol:[ [r0x r0y], [r1x r1y].. ] Tierra:[ [r0x r0y], [r1x r1y].. ] ]
         List<List<ArrayList<Double>>> newDerivatives = new ArrayList<>();
 
         for(List<ArrayList<Double>> rs : der) {
@@ -179,7 +179,7 @@ public class VenusMission {
             r5.add(r5x);
             r5.add(r5y);
             auxNewDerivatives.add(r5);
-
+            System.out.println("aux new derivatives "+auxNewDerivatives);
             newDerivatives.add(auxNewDerivatives);
         }
 
@@ -202,8 +202,8 @@ public class VenusMission {
             r0.add(r0y);
             auxNewDerivatives.add(r0);
 
-            double r1x = rs.get(1).get(0) + (alpha[1] * dR2.get(count).get(0) * 1) / (dT);
-            double r1y = rs.get(1).get(1) + (alpha[1] * dR2.get(count).get(0) * 1) / (dT);
+            double r1x = rs.get(1).get(0) + (alpha[1] * dR2.get(count).get(0) * 1 ) / (dT);
+            double r1y = rs.get(1).get(1) + (alpha[1] * dR2.get(count).get(0) * 1 ) / (dT);
             ArrayList<Double> r1 = new ArrayList<>();
             r1.add(r1x);
             r1.add(r1y);
@@ -271,8 +271,8 @@ public class VenusMission {
                 double distance = Math.sqrt(Math.pow((deltaX), 2) + Math.pow((deltaY), 2));
                 double ex = deltaX / distance;
                 double ey = deltaY / distance;
-                Fx += G * currentPlanet.getM() * p.getM() * ex / Math.pow(distance, 2);
-                Fy += G * currentPlanet.getM() * p.getM() * ey / Math.pow(distance, 2);
+                Fx += G * currentPlanet.getM() * p.getM() * ex / (distance * distance);
+                Fy += G * currentPlanet.getM() * p.getM() * ey / (distance * distance);
             }
         }
 

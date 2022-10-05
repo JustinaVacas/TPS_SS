@@ -14,7 +14,7 @@ def export_to_ovito(frame_file):
     def simulation_cell(frame, data):
         cell = SimulationCell()
         cell[:, 0] = (4, 0, 0)      # va el L donde estan los 7s
-        cell[:, 1] = (0, 4, 0)
+        cell[:, 1] = (0, 2, 0)
         cell[:, 2] = (0, 0, 2)
         data.objects.append(cell)
 

@@ -20,7 +20,7 @@ public class Amortiguado {
 
     public static void main(String[] args) {
 
-        double dT = 0.005;
+        double dT = 0.00002;
         Particle particle = new Particle(1,0,-(100.0 / (2*m)),0,m);
 
         List<ArrayList<Double>> finalStates = new ArrayList<>();
