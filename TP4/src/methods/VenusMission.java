@@ -50,7 +50,7 @@ public class VenusMission {
         double naveVx = oX * vT;
         double naveVy = oY * vT;
 
-        Planet nave = new Planet(3, 1, mNave);
+        Planet nave = new Planet(3, 100, mNave);
         nave.setX(naveX);
         nave.setY(naveY);
         nave.setVx(naveVx);
