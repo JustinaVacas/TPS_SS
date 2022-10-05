@@ -23,7 +23,7 @@ def export_to_ovito(frame_file):
 
     pipeline.modifiers.append(simulation_cell)
 
-    export_file(pipeline, 'results_ovito.dump', 'lammps/dump',
+    export_file(pipeline, 'results_ovito23.dump', 'lammps/dump',
                 columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius", "Force.X", "Force.Y", "Force.Z"],
                 multiple_frames=True, start_frame=0, end_frame=len(data_frame) - 1)
 
@@ -32,10 +32,10 @@ def get_particle_data(frame_file, step):
 
 
     static_df = []
-    static_df.append(3000)
-    static_df.append(1000)
-    static_df.append(800)
-    static_df.append(300)
+    static_df.append(695700)     # sol
+    static_df.append(6371.01*30)          # tierra
+    static_df.append(6051.84*30)           # venus
+    static_df.append(100000)        # nave
 
     static = pd.DataFrame(np.array(static_df), columns=["radius"])
 
@@ -62,7 +62,7 @@ def get_particle_data(frame_file, step):
 def get_particles(data_frame):
     particles = Particles()
     particles.create_property('Particle Identifier', data=data_frame.id)
-    particles.create_property("Position", data=np.array((data_frame.x, data_frame.y, np.zeros(len(data_frame.x)))).T)
+    particles.create_property("Position", data=np.array((data_frame.x/15, data_frame.y/15, np.zeros(len(data_frame.x)))).T)
     particles.create_property('Radius', data=data_frame.radius)
     particles.create_property("Force", data=np.array((data_frame.vx, data_frame.vy, np.zeros(len(data_frame.x)))).T)
 
