@@ -76,7 +76,7 @@ public class VenusMission {
             auxR.add(r);
             //r2
             r = new ArrayList<>();
-            ArrayList<Double> a = calculateA(planet, true);
+            ArrayList<Double> a = calculateA(planet, true,null);
             r.add(a.get(0));
             r.add(a.get(1));
             auxR.add(r);
@@ -98,11 +98,11 @@ public class VenusMission {
     public static List<ArrayList<Double>> gear(double dT, double tf){
 
         List<ArrayList<Double>> states = new ArrayList<>();
-        double t = 0;
-
+        double t = dT;
         List<List<ArrayList<Double>>> currentRs = Rs;
 
         while(t <= tf) {
+            System.out.println("t: " + t);
             // me guardo el estado
             for (Planet p: planetsArray ) {
                 ArrayList<Double> state = new ArrayList<>();
@@ -128,7 +128,6 @@ public class VenusMission {
             currentRs = gearCorrector(newDerivatives, dT, deltasR2);
 
             t += dT;
-
             System.out.println("dps de una vuelta" + currentRs);
         }
         return states;
@@ -182,7 +181,6 @@ public class VenusMission {
             r5.add(r5x);
             r5.add(r5y);
             auxNewDerivatives.add(r5);
-            System.out.println("aux new derivatives "+auxNewDerivatives);
             newDerivatives.add(auxNewDerivatives);
         }
 
@@ -249,14 +247,12 @@ public class VenusMission {
         return newDerivatives;
     }
 
-    private static ArrayList<Double> calculateA(final Planet currentPlanet, boolean flag) {
+    private static ArrayList<Double> calculateA(final Planet currentPlanet, boolean flag, List<List<ArrayList<Double>>> Rs) {
         double Fx = 0;
         double Fy = 0;
 
         for (Planet p : planetsArray) {
             if (p.getId() != currentPlanet.getId()) {
-                System.out.println("current: " + currentPlanet.getId());
-                System.out.println("con quien sumo: " + p.getId());
                 ArrayList<Double> pPosition = new ArrayList<>();
                 ArrayList<Double> currentPlanetPosition = new ArrayList<>();
                 if(flag) {
@@ -269,8 +265,6 @@ public class VenusMission {
                     pPosition = Rs.get(p.getId()).get(0);
                     currentPlanetPosition = Rs.get(currentPlanet.getId()).get(0);
                 }
-                System.out.println("current positions: " + currentPlanetPosition);
-                System.out.println("planet positions: " + pPosition);
                 double deltaX = pPosition.get(0) - currentPlanetPosition.get(0);
                 double deltaY = pPosition.get(1) - currentPlanetPosition.get(1);
                 double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
@@ -291,7 +285,7 @@ public class VenusMission {
         List<ArrayList<Double>> deltasR2 = new ArrayList<>();
         for(Planet planet : planetsArray){
 
-            ArrayList<Double> A = calculateA(planet, false);
+            ArrayList<Double> A = calculateA(planet, false, newDerivatives);
             ArrayList<Double> r2 = newDerivatives.get(planet.getId()).get(2);
 
             double dR2X = (A.get(0) - r2.get(0)) * dT*dT / 2;
@@ -302,6 +296,7 @@ public class VenusMission {
             deltaR2.add(dR2Y);
             deltasR2.add(deltaR2);
         }
+        System.out.println("getR2 devuelve" + deltasR2);
         return deltasR2;
         // [ sol: [dr2x dr2y] ,tierra: [dr2x dr2y] ,venus: [dr2x dr2y], nave: [dr2x dr2y] ]
     }
