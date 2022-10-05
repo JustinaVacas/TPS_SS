@@ -7,7 +7,7 @@ from ovito.io import export_file
 from ovito.pipeline import StaticSource, Pipeline
 
 def export_to_ovito(frame_file):
-    data_frame = get_particle_data(frame_file)
+    data_frame = get_particle_data(frame_file, step=int(12*60*60/300)) # cada 12 horas de viaje
 
     pipeline = Pipeline(source=StaticSource(data=DataCollection()))
 
@@ -28,7 +28,7 @@ def export_to_ovito(frame_file):
                 multiple_frames=True, start_frame=0, end_frame=len(data_frame) - 1)
 
 
-def get_particle_data(frame_file):
+def get_particle_data(frame_file, step):
 
 
     static_df = []
@@ -56,7 +56,7 @@ def get_particle_data(frame_file):
                 frame_lines = []
         df = pd.DataFrame(np.array(frame_lines), columns=["id", "x", "y", "vx", "vy"])
         frames.append(pd.concat([df, static], axis=1))
-    return frames
+    return frames[0::step]
 
 
 def get_particles(data_frame):

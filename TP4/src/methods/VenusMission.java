@@ -29,9 +29,9 @@ public class VenusMission {
 
         System.out.println("Rs: " + Rs);
 
-        double dt = 0.005;
-        double tf = 1;
-        List<ArrayList<Double>> states = gear(dt,tf);
+        double dt = 300;
+        double tf = 365 * 24 * 60 * 60;
+        List<ArrayList<Double>> states = gear(dt, tf);
         GeneratorFiles.output(states);
     }
 
@@ -58,7 +58,7 @@ public class VenusMission {
         planetsArray.add(nave);
     }
 
-    public static List<List<ArrayList<Double>>> initialR(){
+    public static List<List<ArrayList<Double>>> initialRs(){
         List<List<ArrayList<Double>>> R = new ArrayList<>();
 //       [Sol: [ [r0x r0y] [r1x r1y] ] [ [r0x r0y] [r1x r1y] ], Tierra: [ [r0x r0y] [r1x r1y] ] [ [r0x r0y] [r1x r1y] ]]
         ArrayList<Double> r;
@@ -89,6 +89,7 @@ public class VenusMission {
             auxR.add(r);
             //r5
             auxR.add(r);
+
             R.add(auxR);
         }
         return R;
@@ -124,9 +125,11 @@ public class VenusMission {
             List<ArrayList<Double>> deltasR2 = getR2(newDerivatives,dT);
 
             //correccion
-            currentRs = gearCorrector(newDerivatives, dT, alpha, deltasR2);
+            currentRs = gearCorrector(newDerivatives, dT, deltasR2);
 
             t += dT;
+
+            System.out.println("dps de una vuelta" + currentRs);
         }
         return states;
     }
@@ -135,7 +138,7 @@ public class VenusMission {
 //       [ Sol:[ [r0x r0y], [r1x r1y].. ] Tierra:[ [r0x r0y], [r1x r1y].. ] ]
         List<List<ArrayList<Double>>> newDerivatives = new ArrayList<>();
 
-        for(List<ArrayList<Double>> rs : der) {
+        for(List<ArrayList<Double>> rs : der) {  // para cada planeta
             List<ArrayList<Double>> auxNewDerivatives = new ArrayList<>();
 
             double r0x = rs.get(0).get(0) + rs.get(1).get(0) * dT + rs.get(2).get(0) * dT * dT / 2 + rs.get(3).get(0) * dT * dT * dT / 6 + rs.get(4).get(0) * dT * dT * dT * dT / 24 + rs.get(5).get(0) * dT * dT * dT * dT * dT / 120;
@@ -186,17 +189,17 @@ public class VenusMission {
         return newDerivatives;
     }
 
-    public static List<List<ArrayList<Double>>> gearCorrector(List<List<ArrayList<Double>>> der, double dT, double[] alpha, List<ArrayList<Double>>  dR2){
+    public static List<List<ArrayList<Double>>> gearCorrector(List<List<ArrayList<Double>>> der, double dT, List<ArrayList<Double>>  dR2){
        // [ [ [r0x r0y] [r1x r1y] ] [ [r2x r2y] [r3x r3y] ] ]
         List<List<ArrayList<Double>>> newDerivatives = new ArrayList<>();
-        int count =0;
-        for(List<ArrayList<Double>> rs : der) {
+        int count = 0;
+        for(List<ArrayList<Double>> rs : der) { // por planeta
 
             List<ArrayList<Double>> auxNewDerivatives = new ArrayList<>();
 
             // dR2 = [ sol: [dr2x dr2y] ,tierra: [dr2x dr2y] ,venus: [dr2x dr2y], nave: [dr2x dr2y] ]
-            double r0x = rs.get(0).get(0) + (alpha[0] * dR2.get(count).get(0) * 1);
-            double r0y = rs.get(0).get(1) + (alpha[0] * dR2.get(count).get(1) * 1);
+            double r0x = rs.get(0).get(0) + (alpha[0] * dR2.get(count).get(0));
+            double r0y = rs.get(0).get(1) + (alpha[0] * dR2.get(count).get(1));
             ArrayList<Double> r0 = new ArrayList<>();
             r0.add(r0x);
             r0.add(r0y);
@@ -252,7 +255,8 @@ public class VenusMission {
 
         for (Planet p : planetsArray) {
             if (p.getId() != currentPlanet.getId()) {
-
+                System.out.println("current: " + currentPlanet.getId());
+                System.out.println("con quien sumo: " + p.getId());
                 ArrayList<Double> pPosition = new ArrayList<>();
                 ArrayList<Double> currentPlanetPosition = new ArrayList<>();
                 if(flag) {
@@ -265,10 +269,11 @@ public class VenusMission {
                     pPosition = Rs.get(p.getId()).get(0);
                     currentPlanetPosition = Rs.get(currentPlanet.getId()).get(0);
                 }
-
+                System.out.println("current positions: " + currentPlanetPosition);
+                System.out.println("planet positions: " + pPosition);
                 double deltaX = pPosition.get(0) - currentPlanetPosition.get(0);
                 double deltaY = pPosition.get(1) - currentPlanetPosition.get(1);
-                double distance = Math.sqrt(Math.pow((deltaX), 2) + Math.pow((deltaY), 2));
+                double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
                 double ex = deltaX / distance;
                 double ey = deltaY / distance;
                 Fx += G * currentPlanet.getM() * p.getM() * ex / (distance * distance);
