@@ -106,7 +106,7 @@ def parseParameters(file,initial_date):
     count = 0
     index = 0
     for n, v in zip(positionsN, positionsV):
-        aux = ((n[0] - v[0])**2 + (n[1] - v[1])**2)**0.5
+        aux = ((n[0] - v[0])**2 + (n[1] - v[1])**2)**0.5 - 6051.84          # menos el radio de venus
         distance.append(aux)
         if (min > aux) & (min != 0):
             min = aux
