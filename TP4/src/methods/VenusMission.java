@@ -23,11 +23,11 @@ public class VenusMission {
 
         addNave();
 
-        System.out.println("elementos: " + planetsArray);
+//        System.out.println("elementos: " + planetsArray);
 
         Rs = initialRs();
 
-        System.out.println("Rs: " + Rs);
+//        System.out.println("Rs: " + Rs);
 
         double dt = 300;
         double tf = 365 * 24 * 60 * 60;
@@ -102,7 +102,7 @@ public class VenusMission {
         List<List<ArrayList<Double>>> currentRs = Rs;
 
         while(t <= tf) {
-            System.out.println("t: " + t);
+//            System.out.println("t: " + t);
             // me guardo el estado
             for (Planet p: planetsArray ) {
                 ArrayList<Double> state = new ArrayList<>();
@@ -128,7 +128,7 @@ public class VenusMission {
             currentRs = gearCorrector(newDerivatives, dT, deltasR2);
 
             t += dT;
-            System.out.println("dps de una vuelta" + currentRs);
+//            System.out.println("dps de una vuelta" + currentRs);
         }
         return states;
     }
@@ -296,7 +296,7 @@ public class VenusMission {
             deltaR2.add(dR2Y);
             deltasR2.add(deltaR2);
         }
-        System.out.println("getR2 devuelve" + deltasR2);
+// //       System.out.println("getR2 devuelve" + deltasR2);
         return deltasR2;
         // [ sol: [dr2x dr2y] ,tierra: [dr2x dr2y] ,venus: [dr2x dr2y], nave: [dr2x dr2y] ]
     }

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 import datetime
 
+
 def draw(distance, t):
 
     plt.rcParams.update({'font.size': 30})
@@ -21,8 +22,8 @@ def draw(distance, t):
         data=data,
         layout=go.Layout(
             xaxis=dict(title='Tiempo'),
-            yaxis=dict(title='Distance'),
-            font=dict(size=18),
+            yaxis=dict(title='Distancia'),
+            font=dict(size=20),
             plot_bgcolor='rgb(255,255,255)'
         )
     )
@@ -33,7 +34,7 @@ def draw(distance, t):
     fig.update_yaxes(showgrid=False, linewidth=1, linecolor='black', mirror=True)
     fig.show()
 
-def drawAll(distance1,t1,distance2,t2):
+def drawAll(distance1, t1, distance2, t2):
 
     plt.rcParams.update({'font.size': 30})
 
@@ -57,7 +58,7 @@ def drawAll(distance1,t1,distance2,t2):
         data=data,
         layout=go.Layout(
             xaxis=dict(title='Tiempo'),
-            yaxis=dict(title='Distance'),
+            yaxis=dict(title='Distancia'),
             legend=dict(title='Dia inicial'),
             font=dict(size=18),
             plot_bgcolor='rgb(255,255,255)'
@@ -69,6 +70,36 @@ def drawAll(distance1,t1,distance2,t2):
     fig.update_xaxes(showgrid=False, linewidth=1, linecolor='black', mirror=True)
     fig.update_yaxes(showgrid=False, linewidth=1, linecolor='black', mirror=True)
     fig.show()
+
+
+def drawMin(distance, t):
+
+    plt.rcParams.update({'font.size': 30})
+
+    data = []
+
+    data.append(go.Scatter(
+        x=t, y=distance,
+        mode='lines+markers',
+        marker={'color':'fuchsia'}
+    ))
+
+    fig = go.Figure(
+        data=data,
+        layout=go.Layout(
+            xaxis=dict(title='Fecha inicial'),
+            yaxis=dict(title='Distancia'),
+            font=dict(size=18),
+            plot_bgcolor='rgb(255,255,255)'
+        )
+    )
+
+    # Set figure size
+    fig.update_layout(width=1000, height=1000)
+    fig.update_xaxes(showgrid=False, linewidth=1, linecolor='black', mirror=True)
+    fig.update_yaxes(showgrid=False, linewidth=1, linecolor='black', mirror=True)
+    fig.show()
+
 
 def parseParameters(file,initial_date):
     with open(file) as framesFile:
@@ -127,17 +158,28 @@ def parseParameters(file,initial_date):
     # print("xn", xn)
     # print("yn", yn)
     # print("fechas", dates)
-    return distance, t, dates
+    return distance, t, dates, min, dates[index]
 
 
 if __name__ == '__main__':
-    distance, t, dates = parseParameters(sys.argv[1], datetime.date(2022, 9, 23))
-    distance2, t2, dates2 = parseParameters(sys.argv[2], datetime.date(2022, 9, 26))
+    distance23, t23, dates23, min23, fecha_min23 = parseParameters(sys.argv[1], datetime.date(2022, 9, 23))
+    distance24, t24, dates24, min24, fecha_min24 = parseParameters(sys.argv[2], datetime.date(2022, 9, 24))
+    distance25, t25, dates25, min25, fecha_min25 = parseParameters(sys.argv[3], datetime.date(2022, 9, 25))
+    distance26, t26, dates26, min26, fecha_min26 = parseParameters(sys.argv[4], datetime.date(2022, 9, 26))
+    distance27, t27, dates27, min27, fecha_min27 = parseParameters(sys.argv[5], datetime.date(2022, 9, 27))
+    distance28, t28, dates28, min28, fecha_min28 = parseParameters(sys.argv[6], datetime.date(2022, 9, 28))
+    distance29, t29, dates29, min29, fecha_min29 = parseParameters(sys.argv[7], datetime.date(2022, 9, 29))
+    distance30, t30, dates30, min30, fecha_min30 = parseParameters(sys.argv[8], datetime.date(2022, 9, 30))
 
-    draw(distance, dates)
-    draw(distance2, dates2)
 
-    drawAll(distance, dates, distance2, dates2)
+    draw(distance23, dates23)
+    draw(distance30, dates30)
+
+    mins = [min23, min24, min25, min26, min27, min28, min29, min30]
+    fechas = [datetime.date(2022, 9, 23), datetime.date(2022, 9, 24), datetime.date(2022, 9, 25), datetime.date(2022, 9, 26), datetime.date(2022, 9, 27), datetime.date(2022, 9, 28), datetime.date(2022, 9, 29), datetime.date(2022, 9, 30)]
+    drawMin(mins, fechas)
+
+    # drawAll(distance, dates, distance2, dates2)
 
 
 
