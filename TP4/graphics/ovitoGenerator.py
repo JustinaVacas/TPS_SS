@@ -23,7 +23,7 @@ def export_to_ovito(frame_file):
 
     pipeline.modifiers.append(simulation_cell)
 
-    export_file(pipeline, 'results_ovito23.dump', 'lammps/dump',
+    export_file(pipeline, 'results_ovito13-05-23.dump', 'lammps/dump',
                 columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius", "Force.X", "Force.Y", "Force.Z"],
                 multiple_frames=True, start_frame=0, end_frame=len(data_frame) - 1)
 

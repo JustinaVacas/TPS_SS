@@ -8,7 +8,7 @@ import java.util.List;
 public class GeneratorFiles {
     public static void output(List<ArrayList<Double>> frames){
         try {
-            FileWriter myWriter = new FileWriter("./states30.txt");
+            FileWriter myWriter = new FileWriter("../utilsNasa/states13-05-23.txt");
             int count = 0;
             for (ArrayList<Double> frame : frames) {
                 if(count == 4|| count == 0){
@@ -19,7 +19,7 @@ public class GeneratorFiles {
                 count++;
             }
             myWriter.close();
-            System.out.println("Successfully wrote states30.txt.");
+            System.out.println("Successfully wrote states13-05-23.txt.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();

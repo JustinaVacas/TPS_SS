@@ -5,7 +5,7 @@ import datetime
 
 def drawMin(distance, t):
 
-    plt.rcParams.update({'font.size': 30})
+    plt.rcParams.update({'font.size': 40})
 
     data = []
 
@@ -18,9 +18,9 @@ def drawMin(distance, t):
     fig = go.Figure(
         data=data,
         layout=go.Layout(
-            xaxis=dict(title='Fecha inicial'),
-            yaxis=dict(title='Distancia'),
-            font=dict(size=18),
+            xaxis=dict(title='Fecha de salida'),
+            yaxis=dict(title='Distancia (km)'),
+            font=dict(size=25),
             plot_bgcolor='rgb(255,255,255)'
         )
     )

@@ -7,11 +7,11 @@ import java.util.List;
 
 public class VenusMission {
 
-    private static final Double G = 6.693 * Math.pow(10, -11) / Math.pow(10, 9); //Divido para pasarla a km
+    private static final Double G = 6.693 * Math.pow(10, -11) / Math.pow(10, 9);
     private static final double[] alpha = {3.0/16, 251.0/360, 1, 11.0/18, 1.0/6, 1.0/60};
 
     private static double dEstacionEspacial = 1500;
-    private static double vDespegue = 8;
+    private static double vDespegue = 8.3;
     private static double vOrbitalEstacion = 7.12;
     private static double mNave = 200000;
     // 0 Sol 1 Tierra 2 Venus
@@ -21,6 +21,7 @@ public class VenusMission {
     public static void main(String[] args) {
         Parser.ParseParameters(args[0], planetsArray);
 
+//        addNaveBack();
         addNave();
 
 //        System.out.println("elementos: " + planetsArray);
@@ -42,13 +43,36 @@ public class VenusMission {
         double d = Math.sqrt((Math.pow((tierra.getX() - sol.getX()), 2) + Math.pow((tierra.getY() - sol.getY()), 2)));
         double rx = (tierra.getX() - sol.getX()) / d; // normal a la orbita
         double ry = (tierra.getY() - sol.getY()) / d;
-        double oX = -ry; //componentes tangenciales a las orbitas
-        double oY = rx;
+        double tanX = -ry;
+        double tanY = rx;
         double naveX = (dEstacionEspacial + tierra.getR()) * -rx + tierra.getX();
         double naveY = (dEstacionEspacial + tierra.getR()) * -ry + tierra.getY();
-        double vT = -7.12 - 8 + tierra.getVx() * oX + tierra.getVy() * oY;
-        double naveVx = oX * vT;
-        double naveVy = oY * vT;
+        double velocidadT = - 7.12 - 8 + tierra.getVx() * tanX + tierra.getVy() * tanY;
+        double naveVx = tanX * velocidadT;
+        double naveVy = tanY * velocidadT;
+
+        Planet nave = new Planet(3, 100, mNave);
+        nave.setX(naveX);
+        nave.setY(naveY);
+        nave.setVx(naveVx);
+        nave.setVy(naveVy);
+        planetsArray.add(nave);
+    }
+
+    public static void addNaveBack(){
+        Planet venus = planetsArray.get(2);
+        Planet sol = planetsArray.get(0);
+
+        double d = Math.sqrt((Math.pow((venus.getX() - sol.getX()), 2) + Math.pow((venus.getY() - sol.getY()), 2)));
+        double rx = (venus.getX() - sol.getX()) / d; // normal a la orbita
+        double ry = (venus.getY() - sol.getY()) / d;
+        double tanX = -ry;
+        double tanY = rx;
+        double naveX = (venus.getR() + dEstacionEspacial) * rx + venus.getX();
+        double naveY = (venus.getR() + dEstacionEspacial) * ry + venus.getY();
+        double velocidadT =  10.2 + venus.getVx() * tanX + venus.getVy() * tanY;
+        double naveVx = tanX * velocidadT;
+        double naveVy = tanY * velocidadT;
 
         Planet nave = new Planet(3, 100, mNave);
         nave.setX(naveX);

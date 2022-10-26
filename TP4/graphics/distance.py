@@ -21,9 +21,9 @@ def draw(distance, t):
     fig = go.Figure(
         data=data,
         layout=go.Layout(
-            xaxis=dict(title='Tiempo'),
-            yaxis=dict(title='Distancia'),
-            font=dict(size=20),
+            xaxis=dict(title='Tiempo (dias)'),
+            yaxis=dict(title='Distancia (km)'),
+            font=dict(size=25),
             plot_bgcolor='rgb(255,255,255)'
         )
     )
@@ -87,9 +87,9 @@ def drawMin(distance, t):
     fig = go.Figure(
         data=data,
         layout=go.Layout(
-            xaxis=dict(title='Fecha inicial'),
-            yaxis=dict(title='Distancia'),
-            font=dict(size=18),
+            xaxis=dict(title='Fecha de salida'),
+            yaxis=dict(title='Distancia (km)'),
+            font=dict(size=20),
             plot_bgcolor='rgb(255,255,255)'
         )
     )
@@ -101,7 +101,7 @@ def drawMin(distance, t):
     fig.show()
 
 
-def parseParameters(file,initial_date):
+def parseParameters(file, initial_date):
     with open(file) as framesFile:
         framesLines = framesFile.readlines()
 
@@ -118,7 +118,7 @@ def parseParameters(file,initial_date):
             date = initial_date + datetime.timedelta(seconds=float(split[0]))
             dates.append(date)
         elif len(split) == 5:
-            if count == 2:
+            if count == 1: #1 es tierra 2 es venus
                 positionsV.append([float(split[1]), float(split[2])])
                 count += 1
             elif count == 3:
@@ -151,8 +151,8 @@ def parseParameters(file,initial_date):
             index = count
         count += 1
 
-    print("distancia minima ", min)
-    print("fecha ", dates[index])
+    # print("distancia minima ", min)
+    # print("fecha ", dates[index])
     # print("xv", xv)
     # print("yv", yv)
     # print("xn", xn)
@@ -162,6 +162,7 @@ def parseParameters(file,initial_date):
 
 
 if __name__ == '__main__':
+    '''
     distance23, t23, dates23, min23, fecha_min23 = parseParameters(sys.argv[1], datetime.date(2022, 9, 23))
     distance24, t24, dates24, min24, fecha_min24 = parseParameters(sys.argv[2], datetime.date(2022, 9, 24))
     distance25, t25, dates25, min25, fecha_min25 = parseParameters(sys.argv[3], datetime.date(2022, 9, 25))
@@ -170,14 +171,17 @@ if __name__ == '__main__':
     distance28, t28, dates28, min28, fecha_min28 = parseParameters(sys.argv[6], datetime.date(2022, 9, 28))
     distance29, t29, dates29, min29, fecha_min29 = parseParameters(sys.argv[7], datetime.date(2022, 9, 29))
     distance30, t30, dates30, min30, fecha_min30 = parseParameters(sys.argv[8], datetime.date(2022, 9, 30))
-
-
-    draw(distance23, dates23)
-    draw(distance30, dates30)
-
-    mins = [min23, min24, min25, min26, min27, min28, min29, min30]
-    fechas = [datetime.date(2022, 9, 23), datetime.date(2022, 9, 24), datetime.date(2022, 9, 25), datetime.date(2022, 9, 26), datetime.date(2022, 9, 27), datetime.date(2022, 9, 28), datetime.date(2022, 9, 29), datetime.date(2022, 9, 30)]
-    drawMin(mins, fechas)
+'''
+    distance11, t11, dates11, min11, fecha_min11 = parseParameters(sys.argv[1], datetime.date(2023, 3, 8))
+    print("min" , min11)
+    print(fecha_min11)
+   # draw(distance11, dates11)
+    # draw(distance23, dates23)
+    # draw(distance30, dates30)
+    #
+    # mins = [min23, min24, min25, min26, min27, min28, min29, min30]
+    # fechas = [datetime.date(2022, 9, 23), datetime.date(2022, 9, 24), datetime.date(2022, 9, 25), datetime.date(2022, 9, 26), datetime.date(2022, 9, 27), datetime.date(2022, 9, 28), datetime.date(2022, 9, 29), datetime.date(2022, 9, 30)]
+    # drawMin(mins, fechas)
 
     # drawAll(distance, dates, distance2, dates2)
 
