@@ -24,5 +24,7 @@ public class Simulator {
         System.out.println("humans size: " + humans.size());
         System.out.println("zombies: " + zombies);
         System.out.println("zombies size: " + zombies.size());
+
+        CPM.run(Rmax,Rmin,R,vdH,vdZ,humans,zombies);
     }
 }
