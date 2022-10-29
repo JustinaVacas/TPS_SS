@@ -41,7 +41,7 @@ public class CPM {
             //agregar a frames
 
             //fijarse si la transformacion de humano a zombie termino
-            //verifyTransformations();
+//            verifyTransformations();
 
             //fijarse si un zombie está en contacto con un humano
             //y empezar la transformacion del humano
@@ -60,8 +60,8 @@ public class CPM {
 
 
     public static void humans(ArrayList<Particle> humans){
-        Map<Particle, Particle> contacts = calculateDistance(humans);
-        List<Particle> wallContacts = calculateWalls(humans);
+        Map<Particle, Particle> contacts = calculateDistanceHumans(humans);
+        List<Particle> wallContacts = calculateWalls(humans); //Aca otra cosa
         for (Particle human : humans){
 
             //si un humano choca con otro
@@ -98,6 +98,58 @@ public class CPM {
             }
         }
 
+    }
+
+    public static void newHumanTarget(Particle human, Particle nextHuman, Particle nextZombie, List<Double> nextWall){
+        double humanX = human.getX();
+        double humanY = human.getY();
+
+        if(nextZombie == null){
+            human.setVx(0);
+            human.setVy(0);
+            return;
+        }
+
+        // escapa de un humano
+        double[] awayFromHumanDir = {0, 0};
+        if (nextHuman != null){
+            awayFromHumanDir = calculateEscape(human, nextHuman.getX(), nextHuman.getY(), nextHuman.getRadio(),false);
+        }
+        // escapa de una pared
+        double[] awayFromWallDir = {0, 0};
+        if (nextWall != null){
+            awayFromWallDir = calculateEscape(human, nextWall.get(0),nextWall.get(1),0,false);
+        }
+        // escapa de un zombie
+        double[] zombieEscape = calculateEscape(human, nextZombie.getX(),nextZombie.getY(), nextZombie.getRadio(),true);
+
+        // elegir segun heuristica
+        double sumXdirection = zombieEscape[0] + awayFromHumanDir[0] + awayFromWallDir[0];
+        double sumYdirection = zombieEscape[1] + awayFromHumanDir[1] + awayFromWallDir[1];
+        double norma = getNorm(sumXdirection, sumYdirection);
+        //normalizo
+        sumXdirection = sumXdirection / norma;
+        sumYdirection = sumYdirection / norma;
+        human.setVx((sumXdirection * vdH * Math.pow((human.getRadio() - Rmin) / (Rmax - Rmin), beta)));
+        human.setVy((sumYdirection * vdH * Math.pow((human.getRadio() - Rmin) / (Rmax - Rmin), beta)));
+
+    }
+
+    private static double[] calculateEscape(Particle human, double x2, double y2, double r2, boolean isZombie){
+        double x1 = human.getX();
+        double y1 = human.getY();
+        double r1 = human.getRadio();
+        double distance = Math.sqrt(Math.pow(x2 - x1,2) + Math.pow(y2 - y1,2)) - (r1 + r2);
+        double newAp = Ap;
+        double newBp = Bp;
+        if(isZombie){
+            newAp = ApZ;
+            newBp = BpZ;
+        }
+        double aux = newAp * Math.exp(-distance / newBp);
+        double eX = (x1 - x2) / distance;
+        double eY = (y1 - y2) / distance;
+        return new double[]{eX * aux, eY * aux};
     }
 
     public static void zombies(ArrayList<Particle> zombies) {
@@ -221,6 +273,23 @@ public class CPM {
         }
 
         return wallsContacts;
+    }
+
+    public static void velocityEscape(Particle human, double x, double y, boolean isZombie){
+        double deltaX = human.getX() - x;
+        double deltaY = human.getY() - y;
+        //ppt pag 52
+        double norm = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+        deltaX = deltaX / norm;
+        deltaY = deltaY / norm;
+
+        if (isZombie){
+            human.setVx(deltaX * vdZ);
+            human.setVy(deltaY * vdZ);
+        } else {
+            human.setVx(deltaX * vdH);
+            human.setVy(deltaY * vdH);
+        }
     }
 
     public static Particle nextZombie(Particle human, boolean isHuman) {
