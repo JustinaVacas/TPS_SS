@@ -12,12 +12,15 @@ public class CPM {
     private static final double ApZ = Ap * AVOID_WEIGHT;
     private static final double BpZ = Bp * AVOID_WEIGHT;
     private static final double beta = 1; //TODO preguntar valor
+    private static final double conversionTime = 7;
 
     private static double deltaT;
     public static double vdH;
     public static double vdZ;
     public static double vzi = 0.3;
     private static double t;
+    private static double Nh;
+    private static double fractionZ;
 
     public static double Rmax;
     public static double Rmin;
@@ -25,28 +28,40 @@ public class CPM {
     public static ArrayList<Particle> humans;
     public static ArrayList<Particle> zombies;
 
+    public static Map<Double,ArrayList<Particle>> converting;
+    public static Queue<Double> times;
+    //cola tiempo
+    //k:tiempo v:ArrayList<ArrayList<particle>>
+
     public static void run(double rmax, double rmin,double radio, double vdHumans, double vdZombies, ArrayList<Particle> humansArray,ArrayList<Particle> zombiesArray){
 
         Rmax = rmax;
         Rmin = rmin;
         R = radio;
+        Nh = humans.size();
         vdH = vdHumans;
         vdZ = vdZombies;
         humans = humansArray;
         zombies = zombiesArray;
         deltaT = Rmin / (2*(vdH)); //TODO chequear valor
         t = 0;
-        //while () {
+        double fractionZ = 0.0001;
+        GeneratorFiles.generateFile();
+
+        //corte por cantidad de zombies o tiempo
+        while(t < 50) {
 
             //agregar a frames
 
-            //fijarse si la transformacion de humano a zombie termino
-//            verifyTransformations();
+            GeneratorFiles.outputStates(t, humans, zombies, converting);
+
+            //fijarse si la conversion de humano a zombie termino
+            verifyConversion();
 
             //fijarse si un zombie está en contacto con un humano
             //y empezar la transformacion del humano
             //poner en la cola y sacar al zombie y human de los arrays
-            //verifyZombieContact();
+            zombieAttack();
 
             //itera y encuentra contactos, nuevos radios y calcular velocidades y objetivos
             humans(humans);
@@ -55,7 +70,10 @@ public class CPM {
             moveZombies();
             moveHumans();
             t += deltaT;
-        //}
+            // / humans.size();
+            fractionZ = (zombies.size() + converting.size()) / (Nh+1);
+        }
+
     }
 
 
@@ -217,7 +235,12 @@ public class CPM {
         Map<Particle,Particle> contacts = new HashMap<>();
         double distance;
 
+        ArrayList<Particle> humansList = getList(0);
+        ArrayList<Particle> zombiesList = getList(1);
         ArrayList<Particle> allZombies = new ArrayList<>(zombies); //TODO chequear que funcione
+        allZombies.addAll(humansList);
+        allZombies.addAll(zombiesList);
+
         for(int i = 0; i < allZombies.size(); i++){
             for(int j = i+1; j < allZombies.size(); j++){
                 Particle zombie1 = allZombies.get(i);
@@ -237,7 +260,12 @@ public class CPM {
         Map<Particle,Particle> contacts = new HashMap<>();
         double distance;
 
+        ArrayList<Particle> humansList = getList(0);
+        ArrayList<Particle> zombiesList = getList(1);
         ArrayList<Particle> allHumans = new ArrayList<>(humans); //TODO chequear que funcione
+        allHumans.addAll(humansList);
+        allHumans.addAll(zombiesList);
+
         for(int i = 0; i < allHumans.size(); i++){
             for(int j = i+1; j < allHumans.size(); j++){
                     Particle human1 = allHumans.get(i);
@@ -265,7 +293,7 @@ public class CPM {
             //Centro circulo (0,0)
             distance = Math.sqrt(Math.pow(hx,2)+Math.pow(hy,2));
             //choca si R-1 < radioHuman
-            if(R-distance < human.getRadio()){
+            if((R - distance) < human.getRadio()){
                 //wallsContacts.put(human,)
                 wallsContacts.add(human);
             }
@@ -292,11 +320,23 @@ public class CPM {
         }
     }
 
+    public static ArrayList<Particle> getList(int i){
+        ArrayList<Particle> list = new ArrayList<>();
+        for(ArrayList<Particle> pair : converting.values()){
+            list.add(pair.get(i));
+        }
+        return list;
+    }
+
     public static Particle nextZombie(Particle human, boolean isHuman) {
         double minDist = Integer.MAX_VALUE;
         Particle nextZombie = null;
-        //TODO cambiar
+
+        ArrayList<Particle> convertingZombies = getList(1);
         ArrayList<Particle> allZombies = new ArrayList<>(zombies); //TODO chequear que funcione
+        System.out.println("check size" +  allZombies.size());
+        allZombies.addAll(convertingZombies); //no se si la pisa
+        System.out.println("desp del addAll check size" +  allZombies.size());
 
         double distance;
         for (Particle zombie : allZombies){
@@ -320,11 +360,9 @@ public class CPM {
     public static Particle nextHuman(Particle zombie, boolean isHuman) {
         double minDist = Integer.MAX_VALUE;
         Particle nextHuman = null;
-        //TODO cambiar
-        ArrayList<Particle> allHumans = new ArrayList<>(humans); //TODO chequear que funcione
 
         double distance;
-        for (Particle human : allHumans){
+        for (Particle human : humans){
             distance = Math.sqrt(Math.pow(zombie.getX() - human.getX(), 2) + Math.pow(zombie.getY() - human.getY(),2)) - (zombie.getRadio()+human.getRadio());
 
             if(isHuman){
@@ -362,36 +400,73 @@ public class CPM {
         return Arrays.asList(closestWallX,closestWallY);
     }
 
-//    public static void verifyTransformations(){
-//        boolean stop = false;
-//        double humanAngle;
-//        double zombieAngle;
-//
-//        while (!stop){
-//            //k:12 v: ArrayList[human,zombie],[human,zombie]
-//            //12
-//            //12
-//            TransformingAction closest = transformingActions.peek();
-//            if (closest != null && (t - EPSILON) > closest.getTimestamp()){
-//               // Transformation done
-//                Particle human = closest.getHuman();
-//                humanAngle = Math.toRadians(Math.random() * 360);
-//                human.setRadio(Rmin);
-//                human.setVx(0.0000001 * humanAngle);
-//                human.setVy(0.0000001 * humanAngle);
-//                zombies.add(human);
-//
-//                zombieAngle = Math.toRadians(Math.random() * 360);
-//                closest.getZombie().setR(Rmin);
-//                closest.getZombie().setVx(0.0000001 * zombieAngle);
-//                closest.getZombie().setVy(0.0000001 * zombieAngle);
-//                zombies.add(closest.getZombie());
-//
-//                transformingActions.remove();
-//            } else
-//                stop = true;
-//        }
-//    }
+    public static void verifyConversion(){
+        boolean flag = false;
+        double humanAngle;
+        double zombieAngle;
+
+        while (!flag) {
+            //k:12 v: ArrayList[human,zombie]
+            Double time = times.peek();
+            if (time != null && (t - EPSILON) > time) {
+                ArrayList<Particle> pair = converting.get(time);
+                // Fin de conversion
+                Particle human = pair.get(0);
+                Particle zombie = pair.get(1);
+                humanAngle = Math.toRadians(Math.random() * 360);
+                zombieAngle = Math.toRadians(Math.random() * 360);
+                human.setRadio(Rmin);
+                zombie.setRadio(Rmin);
+                //TODO que velocidad de deambulacion le ponemos
+                //deambulan
+                human.setVx(0.0000001 * humanAngle);
+                human.setVy(0.0000001 * humanAngle);
+                zombie.setVx(0.0000001 * zombieAngle);
+                zombie.setVy(0.0000001 * zombieAngle);
+                zombies.add(human);
+                zombies.add(zombie);
+
+                converting.remove(time);
+                times.remove();
+            }
+            else{
+                flag = true;
+            }
+        }
+    }
+
+    private static void zombieAttack(){
+        Iterator<Particle> iter = zombies.iterator();
+        double distance;
+        while (iter.hasNext()){
+            Particle zombie = iter.next();
+            for(int i = 0; i < humans.size(); i++) {
+                distance = Math.sqrt(Math.pow(humans.get(i).getX()-zombie.getX(),2)+Math.pow(humans.get(i).getY()-zombie.getY(),2)) - (humans.get(i).getRadio()+zombie.getRadio());
+                if (distance <= ZOMBIE_VISION) {
+                    //esta dentro de la vision del zombie
+                    if (distance <= EPSILON) {
+                        //zombie come al humano y se quedan quietos
+                        iter.remove();
+                        zombie.setVx(0);
+                        zombie.setVy(0);
+                        humans.get(i).setVx(0);
+                        humans.get(i).setVy(0);
+
+                        double key = t + conversionTime;
+                        times.add(key);
+
+                        ArrayList<Particle> newPair = new ArrayList<>();
+                        newPair.add(humans.get(i));
+                        newPair.add(zombie);
+                        converting.putIfAbsent(key,newPair);
+
+                        humans.remove(i);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
     private static void moveZombies() {
         for (Particle zombie : zombies) {
