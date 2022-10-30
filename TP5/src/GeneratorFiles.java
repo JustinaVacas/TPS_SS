@@ -30,7 +30,7 @@ public class GeneratorFiles {
                 double hAngle = Math.toRadians(Math.random() * 360);
                 double distance = (Math.random() * ((R - Rmax)- 1)) + 1;
                 double hX = distance * Math.cos(hAngle);
-                double hY = distance * Math.sin(hAngle) * distance;
+                double hY = distance * Math.sin(hAngle);
 
                 boolean flag = false;
                 for(Pair particle : particles){
@@ -89,14 +89,16 @@ public class GeneratorFiles {
             FileWriter myWriter = new FileWriter("./frames.txt", true);
             myWriter.write(t + "\n");
             for (Particle human : humans) {
-                myWriter.write(human.getX() + "\t" + human.getY() + "\t" + human.getRadio() + 1 + "\t" + 0 + "\t" + 0 + "\n");
+                myWriter.write(human.getX() + "\t" + human.getY() + "\t" + human.getRadio() + "\t" + 1 + "\t" + 0 + "\t" + 0 + "\n");
             }
             for (Particle zombie : zombies) {
-                myWriter.write(zombie.getX() + "\t" + zombie.getY() + "\t" + zombie.getRadio() + 0 + "\t" + 1 + "\t" + 0 + "\n");
+                myWriter.write(zombie.getX() + "\t" + zombie.getY() + "\t" + zombie.getRadio() + "\t" + 0 + "\t" + 1 + "\t" + 0 + "\n");
             }
-            for(ArrayList<Particle> pair : converting.values()){
-                myWriter.write(pair.get(0).getX() + "\t" + pair.get(0).getY() + "\t" + pair.get(0).getRadio() + 0 + "\t" + 0 + "\t" + 1 + "\n"); //humano
-                myWriter.write(pair.get(1).getX() + "\t" + pair.get(1).getY() + "\t" + pair.get(1).getRadio() + 0 + "\t" + 0 + "\t" + 1 + "\n"); //zombie
+            if(converting!=null) {
+                for (ArrayList<Particle> pair : converting.values()) {
+                    myWriter.write(pair.get(0).getX() + "\t" + pair.get(0).getY() + "\t" + pair.get(0).getRadio() + "\t" + 0 + "\t" + 0 + "\t" + 1 + "\n"); //humano
+                    myWriter.write(pair.get(1).getX() + "\t" + pair.get(1).getY() + "\t" + pair.get(1).getRadio() + "\t" + 0 + "\t" + 0 + "\t" + 1 + "\n"); //zombie
+                }
             }
             myWriter.close();
             System.out.println("Successfully wrote frames.txt.");

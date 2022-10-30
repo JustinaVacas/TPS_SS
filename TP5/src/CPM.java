@@ -38,7 +38,7 @@ public class CPM {
         Rmax = rmax;
         Rmin = rmin;
         R = radio;
-        Nh = humans.size();
+        Nh = humansArray.size();
         vdH = vdHumans;
         vdZ = vdZombies;
         humans = humansArray;
@@ -49,14 +49,16 @@ public class CPM {
         GeneratorFiles.generateFile();
 
         //corte por cantidad de zombies o tiempo
-        while(t < 50) {
+        while(t < 600) {
 
             //agregar a frames
 
             GeneratorFiles.outputStates(t, humans, zombies, converting);
 
             //fijarse si la conversion de humano a zombie termino
-            verifyConversion();
+            if(times!=null) {
+                verifyConversion();
+            }
 
             //fijarse si un zombie está en contacto con un humano
             //y empezar la transformacion del humano
@@ -71,7 +73,7 @@ public class CPM {
             moveHumans();
             t += deltaT;
             // / humans.size();
-            fractionZ = (zombies.size() + converting.size()) / (Nh+1);
+//            fractionZ = (zombies.size() + converting.size()) / (Nh+1);
         }
 
     }
@@ -322,10 +324,14 @@ public class CPM {
 
     public static ArrayList<Particle> getList(int i){
         ArrayList<Particle> list = new ArrayList<>();
-        for(ArrayList<Particle> pair : converting.values()){
-            list.add(pair.get(i));
+        if(converting!=null) {
+            for (ArrayList<Particle> pair : converting.values()) {
+                list.add(pair.get(i));
+            }
+            return list;
         }
-        return list;
+        else
+            return new ArrayList<>();
     }
 
     public static Particle nextZombie(Particle human, boolean isHuman) {
@@ -335,7 +341,8 @@ public class CPM {
         ArrayList<Particle> convertingZombies = getList(1);
         ArrayList<Particle> allZombies = new ArrayList<>(zombies); //TODO chequear que funcione
         System.out.println("check size" +  allZombies.size());
-        allZombies.addAll(convertingZombies); //no se si la pisa
+        if(convertingZombies!=null)
+            allZombies.addAll(convertingZombies); //no se si la pisa
         System.out.println("desp del addAll check size" +  allZombies.size());
 
         double distance;
