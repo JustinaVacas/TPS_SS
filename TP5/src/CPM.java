@@ -28,8 +28,8 @@ public class CPM {
     public static ArrayList<Particle> humans;
     public static ArrayList<Particle> zombies;
 
-    public static Map<Double,ArrayList<Particle>> converting;
-    public static Queue<Double> times;
+    public static Map<Double,ArrayList<Particle>> converting = new HashMap<>();
+    public static Queue<Double> times = new LinkedList<>();
     //cola tiempo
     //k:tiempo v:ArrayList<ArrayList<particle>>
 
@@ -47,9 +47,9 @@ public class CPM {
         t = 0;
         double fractionZ = 0.0001;
         GeneratorFiles.generateFile();
-
+        GeneratorFiles.generateFractionFile();
         //corte por cantidad de zombies o tiempo
-        while(t < 600) {
+        while(t < 300) {
 
             //agregar a frames
 
@@ -74,6 +74,9 @@ public class CPM {
             t += deltaT;
             // / humans.size();
 //            fractionZ = (zombies.size() + converting.size()) / (Nh+1);
+            double fz = zombies.size() + converting.size();
+            double total = Nh + 1 ;
+            GeneratorFiles.fraction(t, fz, total);
         }
 
     }
@@ -81,7 +84,7 @@ public class CPM {
 
     public static void humans(ArrayList<Particle> humans){
         Map<Particle, Particle> contacts = calculateDistanceHumans(humans);
-        List<Particle> wallContacts = calculateWalls(humans); //Aca otra cosa
+        Map<Particle,List<Double>> wallContacts = calculateWalls(humans); //Aca otra cosa
         for (Particle human : humans){
 
             //si un humano choca con otro
@@ -90,7 +93,7 @@ public class CPM {
                 contacts.get(human).setRadio(Rmin); //con el que choca
             }
             //si choca con una pared
-            else if(wallContacts.contains(human)){
+            else if(wallContacts.containsKey(human)){
                 human.setRadio(Rmin);
             }
             //si no choco contra nada, nuevo radio
@@ -106,8 +109,10 @@ public class CPM {
                 velocityEscape(human, contactHuman.getX(), contactHuman.getY(), false);
             }
             // si choco con una pared
-            else if (wallContacts.contains(human)){
+            else if (wallContacts.containsKey(human)){
                 //TODO chequear todo lo que tenga que ver con la pared
+                List<Double> wallPos = wallContacts.get(human);
+                velocityEscape(human, wallPos.get(0), wallPos.get(1), false);
             }
             // nuevo target, me fijo los humanos, zombies y paredes cerca
             else{
@@ -171,7 +176,7 @@ public class CPM {
 
     public static void zombies(ArrayList<Particle> zombies) {
         Map<Particle, Particle> contacts = calculateDistanceZombies(zombies);
-        List<Particle> wallContacts = calculateWalls(zombies);
+        Map<Particle,List<Double>> wallContacts = calculateWalls(zombies);
         for (Particle zombie : zombies) {
 
             //si un zombie choca con otro
@@ -180,7 +185,7 @@ public class CPM {
                 contacts.get(zombie).setRadio(Rmin); //con el que choca
             }
             //si choca con una pared
-            else if (wallContacts.contains(zombie)) {
+            else if (wallContacts.containsKey(zombie)) {
                 zombie.setRadio(Rmin);
             }
             //si no choco contra nada, nuevo radio
@@ -200,10 +205,6 @@ public class CPM {
             else if (contacts.containsKey(zombie)) {
                 Particle contactZombie = contacts.get(zombie);
                 velocityEscape(zombie, contactZombie.getX(), contactZombie.getY(), true);
-            }
-            // si choco con una pared
-            else if (wallContacts.contains(zombie)) {
-                //TODO chequear todo lo que tenga que ver con la pared
             }
             // nuevo target, me fijo los humanos, zombies y paredes cerca
             else {
@@ -243,8 +244,11 @@ public class CPM {
         ArrayList<Particle> humansList = getList(0);
         ArrayList<Particle> zombiesList = getList(1);
         ArrayList<Particle> allZombies = new ArrayList<>(zombies); //TODO chequear que funcione
+        //System.out.println("size zombie antes: "+ allZombies.size());
         allZombies.addAll(humansList);
         allZombies.addAll(zombiesList);
+        //System.out.println("size zombie dps: "+ allZombies.size());
+
 
         for(int i = 0; i < allZombies.size(); i++){
             for(int j = i+1; j < allZombies.size(); j++){
@@ -268,8 +272,11 @@ public class CPM {
         ArrayList<Particle> humansList = getList(0);
         ArrayList<Particle> zombiesList = getList(1);
         ArrayList<Particle> allHumans = new ArrayList<>(humans); //TODO chequear que funcione
+       // System.out.println("size antes: " + allHumans.size());
         allHumans.addAll(humansList);
         allHumans.addAll(zombiesList);
+        //System.out.println("size dps: " + allHumans.size());
+
 
         for(int i = 0; i < allHumans.size(); i++){
             for(int j = i+1; j < allHumans.size(); j++){
@@ -285,27 +292,47 @@ public class CPM {
         return contacts;
     }
 
-    public static List<Particle> calculateWalls(ArrayList<Particle> humans){ //TODO chequear que ande
-        //Map<Particle, List<Double>> wallsContacts = new HashMap<>();
-        List<Particle> wallsContacts = new ArrayList<>();
+    public static Map<Particle,List<Double>>  calculateWalls(ArrayList<Particle> humans){ //TODO chequear que ande
+//        //Map<Particle, List<Double>> wallsContacts = new HashMap<>();
+//        List<Particle> wallsContacts = new ArrayList<>();
+//        double distance;
+//        double hx, hy;
+//
+//        for(Particle human : humans){
+//            hx = human.getX();
+//            hy = human.getY();
+//
+//            //Centro circulo (0,0)
+//            distance = Math.sqrt(Math.pow(hx,2)+Math.pow(hy,2));
+//            //choca si R-1 < radioHuman
+//            if((R - distance) < human.getRadio()){
+//                //wallsContacts.put(human,)
+//                wallsContacts.add(human);
+//            }
+//
+//        }
+//
+//        return wallsContacts;
+        Map<Particle,List<Double>> contacts = new HashMap<>();
         double distance;
-        double hx, hy;
+        double closestWallX;
+        double closestWallY;
+        double x,y;
 
-        for(Particle human : humans){
-            hx = human.getX();
-            hy = human.getY();
+        for(Particle p : humans){
+            x = p.getX();
+            y = p.getY();
 
-            //Centro circulo (0,0)
-            distance = Math.sqrt(Math.pow(hx,2)+Math.pow(hy,2));
-            //choca si R-1 < radioHuman
-            if((R - distance) < human.getRadio()){
-                //wallsContacts.put(human,)
-                wallsContacts.add(human);
+            // Circle center is in (0 ; 0)
+            double magV = Math.sqrt(x*x + y*y);
+            closestWallX = x / magV * R;
+            closestWallY = y / magV * R;
+            distance = Math.sqrt(Math.pow(p.getX()-closestWallX,2)+Math.pow(p.getY()-closestWallY,2)) - p.getRadio();
+            if(distance <= EPSILON){
+                contacts.put(p,Arrays.asList(closestWallX,closestWallY));
             }
-
         }
-
-        return wallsContacts;
+        return contacts;
     }
 
     public static void velocityEscape(Particle human, double x, double y, boolean isZombie){
@@ -343,10 +370,10 @@ public class CPM {
 
         ArrayList<Particle> convertingZombies = getList(1);
         ArrayList<Particle> allZombies = new ArrayList<>(zombies); //TODO chequear que funcione
-        System.out.println("check size" +  allZombies.size());
+        System.out.println("check size: " +  allZombies.size());
         if(convertingZombies!=null)
             allZombies.addAll(convertingZombies); //no se si la pisa
-        System.out.println("desp del addAll check size" +  allZombies.size());
+        System.out.println("desp del addAll check size: " +  allZombies.size());
 
         double distance;
         for (Particle zombie : allZombies){
