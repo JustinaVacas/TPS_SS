@@ -9,21 +9,27 @@ from statistics import mean
 
 def draw(fp1, fp2, fp3, fp4, fp5, fp6, fp7, fp8):
 
+    plt.rcParams.update({'font.size': 12})
+    #plt.rcParams["figure.figsize"] = (20,3)
+
+
     x = [2, 10, 40, 80, 140, 200, 260, 320]
 
+    #promedio
     y = [fp1[0], fp2[0], fp3[0], fp4[0], fp5[0], fp6[0], fp7[0], fp8[0]]
 
+    #desvio estandar
     yerr = [fp1[1], fp2[1], fp3[1], fp4[1], fp5[1], fp6[1], fp7[1], fp8[1]]
 
     fig, ax = plt.subplots()
 
     ax.errorbar(x, y, yerr, fmt='o', linewidth=1, capsize=10, color="purple", ecolor='lightgreen', elinewidth=2, label='11')
 
-    ax.set(xlim=(0, 16), xticks=np.arange(0, 250, 50),
-           ylim=(0, 1.1), yticks=np.arange(0, 1200, 200))
+    ax.set(xlim=(-10, 340), xticks=x,
+           ylim=(0, 1.2), yticks=np.arange(0, 1.2, 0.1))
 
-    plt.xlabel('N')
-    plt.ylabel('Tiempo')
+    plt.xlabel('Cantidad de humanos')
+    plt.ylabel('Fz')
 
     plt.show()
 
