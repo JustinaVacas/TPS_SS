@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class GeneratorFiles {
 
-    public static int Nh = 80;
+    public static int Nh = 200;
     public static double Rmin = 0.1;
     public static double Rmax = 0.3;
     public static double R = 11;

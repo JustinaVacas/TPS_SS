@@ -94,7 +94,7 @@ public class CPM {
                 human.setRadio(Rmin);
             }
             //si no choco contra nada, nuevo radio
-            else if(human.getRadio() < Rmax - EPSILON){
+            else if(human.getRadio() < (Rmax - EPSILON)){
                 human.setRadio(human.getRadio() + Rmax/(TAU/deltaT));
                 if(human.getRadio() > Rmax){
                     human.setRadio(Rmax);
@@ -121,9 +121,6 @@ public class CPM {
     }
 
     public static void newHumanTarget(Particle human, Particle nextHuman, Particle nextZombie, List<Double> nextWall){
-        double humanX = human.getX();
-        double humanY = human.getY();
-
         if(nextZombie == null){
             human.setVx(0);
             human.setVy(0);
@@ -159,7 +156,7 @@ public class CPM {
         double x1 = human.getX();
         double y1 = human.getY();
         double r1 = human.getRadio();
-        double distance = Math.sqrt(Math.pow(x2 - x1,2) + Math.pow(y2 - y1,2)) - (r1 + r2);
+        double distance = Math.sqrt(Math.pow(x1 - x2,2) + Math.pow(y1 - y2,2)) - (r1 + r2);
         double newAp = Ap;
         double newBp = Bp;
         if(isZombie){
@@ -177,7 +174,7 @@ public class CPM {
         List<Particle> wallContacts = calculateWalls(zombies);
         for (Particle zombie : zombies) {
 
-            //si un humano choca con otro
+            //si un zombie choca con otro
             if (contacts.containsKey(zombie)) {
                 zombie.setRadio(Rmin);
                 contacts.get(zombie).setRadio(Rmin); //con el que choca
@@ -193,8 +190,14 @@ public class CPM {
                     zombie.setRadio(Rmax);
                 }
             }
-            // si choco con una persona que escape
-            if (contacts.containsKey(zombie)) {
+            // si choco con una pared que eluda
+            if(wallContacts.containsKey(zombie)) {
+                //TODO chequear todo lo que tenga que ver con la pared
+                List<Double> wallPos = wallContacts.get(zombie);
+                velocityEscape(zombie, wallPos.get(0), wallPos.get(1), true);
+
+            } //si choca
+            else if (contacts.containsKey(zombie)) {
                 Particle contactZombie = contacts.get(zombie);
                 velocityEscape(zombie, contactZombie.getX(), contactZombie.getY(), true);
             }
@@ -403,7 +406,6 @@ public class CPM {
 
         if (!isHuman && h > ZOMBIE_VISION)
             return null;
-
         return Arrays.asList(closestWallX,closestWallY);
     }
 
@@ -418,20 +420,22 @@ public class CPM {
             if (time != null && (t - EPSILON) > time) {
                 ArrayList<Particle> pair = converting.get(time);
                 // Fin de conversion
-                Particle human = pair.get(0);
-                Particle zombie = pair.get(1);
-                humanAngle = Math.toRadians(Math.random() * 360);
-                zombieAngle = Math.toRadians(Math.random() * 360);
-                human.setRadio(Rmin);
-                zombie.setRadio(Rmin);
-                //TODO que velocidad de deambulacion le ponemos
-                //deambulan
-                human.setVx(0.0000001 * humanAngle);
-                human.setVy(0.0000001 * humanAngle);
-                zombie.setVx(0.0000001 * zombieAngle);
-                zombie.setVy(0.0000001 * zombieAngle);
-                zombies.add(human);
-                zombies.add(zombie);
+                if(pair != null) {
+                    Particle human = pair.get(0);
+                    Particle zombie = pair.get(1);
+                    humanAngle = Math.toRadians(Math.random() * 360);
+                    zombieAngle = Math.toRadians(Math.random() * 360);
+                    human.setRadio(Rmin);
+                    zombie.setRadio(Rmin);
+                    //TODO que velocidad de deambulacion le ponemos
+                    //deambulan
+                    human.setVx(0.0000001 * humanAngle);
+                    human.setVy(0.0000001 * humanAngle);
+                    zombie.setVx(0.0000001 * zombieAngle);
+                    zombie.setVy(0.0000001 * zombieAngle);
+                    zombies.add(human);
+                    zombies.add(zombie);
+                }
 
                 converting.remove(time);
                 times.remove();
