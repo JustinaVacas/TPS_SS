@@ -3,7 +3,7 @@ import numpy as np
 import sys
 from statistics import mean
 
-def drawVelocity(fp1, fp2, fp3, fp4, fp5, fp6, fp7, fp8, fp9):
+def drawVelocity(fp1, fp2, fp3, fp4, fp5, fp6, fp7, fp8, fp9,aux):
     plt.rcParams.update({'font.size': 12})
     # plt.rcParams["figure.figsize"] = (20,3)
 
@@ -13,15 +13,20 @@ def drawVelocity(fp1, fp2, fp3, fp4, fp5, fp6, fp7, fp8, fp9):
     y = [fp1[0], fp2[0], fp3[0], fp4[0], fp5[0], fp6[0], fp7[0], fp8[0], fp9[0]]
 
     # desvio estandar
-    yerr = [fp1[1], fp2[1], fp3[1], fp4[1], fp5[1], fp6[1], fp7[1], fp8[1], fp9[1]]
+    yerr = [fp1[1], fp2[1], fp3[1], 0, fp5[1], fp6[1], fp7[1], fp8[1], fp9[1]]
 
     fig, ax = plt.subplots()
 
-    ax.errorbar(x, y, yerr, fmt='o', linewidth=1, capsize=10, color="purple", ecolor='lightgreen', elinewidth=2,
+    ax.errorbar(x, y, yerr, fmt='o', linewidth=1, capsize=10, color="fuchsia", ecolor='blue', elinewidth=2,
                 label='11')
 
     ax.set(xlim=(0.5, 5.5), xticks=x,
-           ylim=(-0.1, 1), yticks=np.arange(0, 1.2, 0.1))
+           ylim=(-0.1, 0.8), yticks=np.arange(0, 0.8, 0.1))
+
+    pos = [2.5]
+    data = [aux]
+    ax.violinplot(data, pos, points=20, widths=0.3,
+                  showmeans=False, showextrema=True, showmedians=False)
 
     plt.xlabel('Velocidad zombie (m/s)')
     plt.ylabel('Velocidad de contagio')
@@ -32,7 +37,7 @@ def drawVelocity(fp1, fp2, fp3, fp4, fp5, fp6, fp7, fp8, fp9):
 # grafico del desvio estandar
 # a partir de un cantidad de simulaciones calculamos el promedio y el desvio estandar
 
-def draw(fp1, fp2, fp3, fp4, fp5, fp6, fp7, fp8, fp9):
+def draw(fp1, fp2, fp3, fp4, fp5, fp6, fp7, fp8, fp9,aux):
     plt.rcParams.update({'font.size': 12})
     # plt.rcParams["figure.figsize"] = (20,3)
 
@@ -42,15 +47,20 @@ def draw(fp1, fp2, fp3, fp4, fp5, fp6, fp7, fp8, fp9):
     y = [fp1[0], fp2[0], fp3[0], fp4[0], fp5[0], fp6[0], fp7[0], fp8[0], fp9[0]]
 
     # desvio estandar
-    yerr = [fp1[1], fp2[1], fp3[1], fp4[1], fp5[1], fp6[1], fp7[1], fp8[1], fp9[1]]
+    yerr = [fp1[1], fp2[1], fp3[1], 0, fp5[1], fp6[1], fp7[1], fp8[1], fp9[1]]
 
     fig, ax = plt.subplots()
 
-    ax.errorbar(x, y, yerr, fmt='o', linewidth=1, capsize=10, color="purple", ecolor='lightgreen', elinewidth=2,
+    ax.errorbar(x, y, yerr, fmt='o', linewidth=1, capsize=10, color="fuchsia", ecolor='blue', elinewidth=2,
                 label='11')
 
     ax.set(xlim=(0.5, 5.5), xticks=x,
            ylim=(-0.1, 1), yticks=np.arange(0, 1.2, 0.1))
+
+    pos = [2.5]
+    data = [aux]
+    ax.violinplot(data, pos, points=20, widths=0.3,
+                  showmeans=False, showextrema=True, showmedians=False)
 
     plt.xlabel('Velocidad zombie (m/s)')
     plt.ylabel('Fz')
@@ -149,10 +159,13 @@ if __name__ == '__main__':
     avgVelocity5 = mean([velocity5_1[-1], velocity5_2[-1], velocity5_3[-1]])
     desvioVelocity5 = np.std([velocity5_1[-1], velocity5_2[-1], velocity5_3[-1]])
 
+    aux = [fz25_1[-1], fz25_2[-1], fz25_3[-1]]
+    aux2 = [velocity25_1[-1], velocity25_2[-1], velocity25_3[-1]]
+
     draw([avgTime1, desvioTime1], [avgTime15, desvioTime15], [avgTime2, desvioTime2], [avgTime25, desvioTime25],
          [avgTime3, desvioTime3], [avgTime35, desvioTime35], [avgTime4, desvioTime4], [avgTime45, desvioTime45],
-         [avgTime5, desvioTime5])
+         [avgTime5, desvioTime5], aux)
 
     drawVelocity([avgVelocity1, desvioVelocity1], [avgVelocity15, desvioVelocity15], [avgVelocity2, desvioVelocity2], [avgVelocity25, desvioVelocity25],
                  [avgVelocity3, desvioVelocity3], [avgVelocity35, desvioVelocity35], [avgVelocity4, desvioVelocity4], [avgVelocity45, desvioVelocity45],
-                 [avgVelocity5, desvioVelocity5])
+                 [avgVelocity5, desvioVelocity5], aux2)
