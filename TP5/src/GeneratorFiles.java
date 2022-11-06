@@ -16,7 +16,7 @@ public class GeneratorFiles {
 
     public static void main(String[] args) {
         try {
-            FileWriter myWriter = new FileWriter("./dynamic.txt");
+            FileWriter myWriter = new FileWriter("./dynamic200.txt");
 
             double zAngle = Math.toRadians(Math.random() * 360);
             double zVx = Math.cos(zAngle) * vzInactivo;
@@ -54,7 +54,7 @@ public class GeneratorFiles {
         }
 
         try {
-            FileWriter myWriter = new FileWriter("./static.txt");
+            FileWriter myWriter = new FileWriter("./static200.txt");
             //cantidad de particulas + radio max + radio del recinto
             myWriter.write(Nh + 1 + "    " + Rmax + "    " + R + "\n");
             for (int i = 0; i <= Nh; i++) {
@@ -70,7 +70,7 @@ public class GeneratorFiles {
 
     public static void generateFile() {
         try {
-            FileWriter myWriter = new FileWriter("./frames.txt");
+            FileWriter myWriter = new FileWriter("./frames200.txt");
             myWriter.close();
             System.out.println("Successfully wrote frames.txt.");
         } catch (IOException e) {
@@ -85,7 +85,7 @@ public class GeneratorFiles {
         //zombies
         //conv
         try {
-            FileWriter myWriter = new FileWriter("./frames.txt", true);
+            FileWriter myWriter = new FileWriter("./frames200.txt", true);
             myWriter.write(t + "\n");
             for (Particle human : humans) {
                 myWriter.write(human.getX() + "\t" + human.getY() + "\t" + human.getRadio() + "\t" + 1 + "\t" + 0 + "\t" + 0 + "\n");
@@ -109,7 +109,7 @@ public class GeneratorFiles {
 
     public static void generateFractionFile() {
         try {
-            FileWriter myWriter = new FileWriter("./fraction200_3.txt");
+            FileWriter myWriter = new FileWriter("./fraction200.txt");
             myWriter.close();
             System.out.println("Successfully wrote fraction.txt.");
         } catch (IOException e) {
@@ -120,7 +120,7 @@ public class GeneratorFiles {
 
     public static void fraction(double t, Double fz, Double total) {
         try {
-            FileWriter myWriter = new FileWriter("./fraction200_3.txt", true);
+            FileWriter myWriter = new FileWriter("./fraction200.txt", true);
             myWriter.write(t + "\t" + fz + "\t" + total + "\n");
             myWriter.close();
             System.out.println("Successfully wrote fraction.txt.");

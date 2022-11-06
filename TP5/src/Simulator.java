@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Simulator {
 
     public static double vdH = 4;
-    public static double vdZ = 3;
+    public static double vdZ = 4.5;
     public static int Nh;
     public static double Rmax;
     public static double Rmin;

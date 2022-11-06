@@ -13,7 +13,7 @@ public class CPM {
     private static final double BpZ = Bp * AVOID_WEIGHT;
     private static final double beta = 1; //TODO preguntar valor
     private static final double conversionTime = 7;
-
+    private static final double auxV = 0.0000001;
     private static double deltaT;
     public static double vdH;
     public static double vdZ;
@@ -50,9 +50,9 @@ public class CPM {
         GeneratorFiles.generateFractionFile();
         //corte por cantidad de zombies o tiempo
         while(t < 300) {
+//        while(fractionZ != 1) {
 
             //agregar a frames
-
             GeneratorFiles.outputStates(t, humans, zombies, converting);
 
             //fijarse si la conversion de humano a zombie termino
@@ -69,13 +69,13 @@ public class CPM {
             humans(humans);
             zombies(zombies);
 
-            moveZombies();
-            moveHumans();
+            Methods.moveZombies(zombies, deltaT);
+            Methods.moveHumans(humans, deltaT);
             t += deltaT;
-            // / humans.size();
-//            fractionZ = (zombies.size() + converting.size()) / (Nh+1);
+
             double fz = zombies.size() + converting.size();
             double total = Nh + 1 ;
+            fractionZ = fz/total;
             GeneratorFiles.fraction(t, fz, total);
         }
 
@@ -84,7 +84,7 @@ public class CPM {
 
     public static void humans(ArrayList<Particle> humans){
         Map<Particle, Particle> contacts = calculateDistanceHumans(humans);
-        Map<Particle,List<Double>> wallContacts = calculateWalls(humans); //Aca otra cosa
+        Map<Particle,List<Double>> wallContacts = calculateWalls(humans);
         for (Particle human : humans){
 
             //si un humano choca con otro
@@ -110,7 +110,6 @@ public class CPM {
             }
             // si choco con una pared
             else if (wallContacts.containsKey(human)){
-                //TODO chequear todo lo que tenga que ver con la pared
                 List<Double> wallPos = wallContacts.get(human);
                 velocityEscape(human, wallPos.get(0), wallPos.get(1), false);
             }
@@ -148,7 +147,7 @@ public class CPM {
         // elegir segun heuristica
         double sumXdirection = zombieEscape[0] + awayFromHumanDir[0] + awayFromWallDir[0];
         double sumYdirection = zombieEscape[1] + awayFromHumanDir[1] + awayFromWallDir[1];
-        double norma = getNorm(sumXdirection, sumYdirection);
+        double norma = Methods.getNorm(sumXdirection, sumYdirection);
         //normalizo
         sumXdirection = sumXdirection / norma;
         sumYdirection = sumYdirection / norma;
@@ -158,6 +157,7 @@ public class CPM {
     }
 
     private static double[] calculateEscape(Particle human, double x2, double y2, double r2, boolean isZombie){
+        // isZombie lo que estoy escapando
         double x1 = human.getX();
         double y1 = human.getY();
         double r1 = human.getRadio();
@@ -197,7 +197,6 @@ public class CPM {
             }
             // si choco con una pared que eluda
             if(wallContacts.containsKey(zombie)) {
-                //TODO chequear todo lo que tenga que ver con la pared
                 List<Double> wallPos = wallContacts.get(zombie);
                 velocityEscape(zombie, wallPos.get(0), wallPos.get(1), true);
 
@@ -220,7 +219,7 @@ public class CPM {
         if(nextHuman != null){ //si hay humano objetivo
             directionX = nextHuman.getX() - zombie.getX();
             directionY = nextHuman.getY() - zombie.getY();
-            double norma = getNorm(directionX, directionY);
+            double norma = Methods.getNorm(directionX, directionY);
             directionX = directionX / norma;
             directionY = directionY / norma;
 
@@ -241,9 +240,9 @@ public class CPM {
         Map<Particle,Particle> contacts = new HashMap<>();
         double distance;
 
-        ArrayList<Particle> humansList = getList(0);
-        ArrayList<Particle> zombiesList = getList(1);
-        ArrayList<Particle> allZombies = new ArrayList<>(zombies); //TODO chequear que funcione
+        ArrayList<Particle> humansList = Methods.getList(0,converting);
+        ArrayList<Particle> zombiesList = Methods.getList(1,converting);
+        ArrayList<Particle> allZombies = new ArrayList<>(zombies);
         //System.out.println("size zombie antes: "+ allZombies.size());
         allZombies.addAll(humansList);
         allZombies.addAll(zombiesList);
@@ -269,9 +268,9 @@ public class CPM {
         Map<Particle,Particle> contacts = new HashMap<>();
         double distance;
 
-        ArrayList<Particle> humansList = getList(0);
-        ArrayList<Particle> zombiesList = getList(1);
-        ArrayList<Particle> allHumans = new ArrayList<>(humans); //TODO chequear que funcione
+        ArrayList<Particle> humansList = Methods.getList(0,converting);
+        ArrayList<Particle> zombiesList = Methods.getList(1,converting);
+        ArrayList<Particle> allHumans = new ArrayList<>(humans);
        // System.out.println("size antes: " + allHumans.size());
         allHumans.addAll(humansList);
         allHumans.addAll(zombiesList);
@@ -285,64 +284,38 @@ public class CPM {
                     distance = Math.sqrt(Math.pow(human2.getX() - human1.getX(),2) + Math.pow(human2.getY() - human1.getY(),2)) - (human1.getRadio() + human2.getRadio());
                     if(distance <= EPSILON){
                         contacts.put(human1,human2);
-                        break; //??
+                        break;
                     }
             }
         }
         return contacts;
     }
 
-    public static Map<Particle,List<Double>>  calculateWalls(ArrayList<Particle> humans){ //TODO chequear que ande
-//        //Map<Particle, List<Double>> wallsContacts = new HashMap<>();
-//        List<Particle> wallsContacts = new ArrayList<>();
-//        double distance;
-//        double hx, hy;
-//
-//        for(Particle human : humans){
-//            hx = human.getX();
-//            hy = human.getY();
-//
-//            //Centro circulo (0,0)
-//            distance = Math.sqrt(Math.pow(hx,2)+Math.pow(hy,2));
-//            //choca si R-1 < radioHuman
-//            if((R - distance) < human.getRadio()){
-//                //wallsContacts.put(human,)
-//                wallsContacts.add(human);
-//            }
-//
-//        }
-//
-//        return wallsContacts;
-        Map<Particle,List<Double>> contacts = new HashMap<>();
+    public static Map<Particle,List<Double>>  calculateWalls(ArrayList<Particle> humans){
+        Map<Particle,List<Double>> contactsMap = new HashMap<>();
         double distance;
-        double closestWallX;
-        double closestWallY;
-        double x,y;
-
-        for(Particle p : humans){
-            x = p.getX();
-            y = p.getY();
-
-            // Circle center is in (0 ; 0)
-            double magV = Math.sqrt(x*x + y*y);
-            closestWallX = x / magV * R;
-            closestWallY = y / magV * R;
-            distance = Math.sqrt(Math.pow(p.getX()-closestWallX,2)+Math.pow(p.getY()-closestWallY,2)) - p.getRadio();
+        double wallX;
+        double wallY;
+        // Centro circulo (0,0)
+        for(Particle particle : humans){
+            double norma = Methods.getNorm(particle.getX(), particle.getY());
+            wallX = particle.getX() / norma * R;
+            wallY = particle.getY() / norma * R;
+            distance = Math.sqrt(Math.pow(particle.getX()-wallX,2) + Math.pow(particle.getY()-wallY,2)) - particle.getRadio();
             if(distance <= EPSILON){
-                contacts.put(p,Arrays.asList(closestWallX,closestWallY));
+                contactsMap.put(particle,Arrays.asList(wallX,wallY));
             }
         }
-        return contacts;
+        return contactsMap;
     }
 
     public static void velocityEscape(Particle human, double x, double y, boolean isZombie){
         double deltaX = human.getX() - x;
         double deltaY = human.getY() - y;
         //ppt pag 52
-        double norm = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+        double norm = Methods.getNorm(deltaX, deltaY);
         deltaX = deltaX / norm;
         deltaY = deltaY / norm;
-
         if (isZombie){
             human.setVx(deltaX * vdZ);
             human.setVy(deltaY * vdZ);
@@ -352,28 +325,16 @@ public class CPM {
         }
     }
 
-    public static ArrayList<Particle> getList(int i){
-        ArrayList<Particle> list = new ArrayList<>();
-        if(converting!=null) {
-            for (ArrayList<Particle> pair : converting.values()) {
-                list.add(pair.get(i));
-            }
-            return list;
-        }
-        else
-            return new ArrayList<>();
-    }
 
     public static Particle nextZombie(Particle human, boolean isHuman) {
         double minDist = Integer.MAX_VALUE;
         Particle nextZombie = null;
 
-        ArrayList<Particle> convertingZombies = getList(1);
-        ArrayList<Particle> allZombies = new ArrayList<>(zombies); //TODO chequear que funcione
-        System.out.println("check size: " +  allZombies.size());
-        if(convertingZombies!=null)
-            allZombies.addAll(convertingZombies); //no se si la pisa
-        System.out.println("desp del addAll check size: " +  allZombies.size());
+        ArrayList<Particle> convertingZombies = Methods.getList(1,converting);
+        ArrayList<Particle> allZombies = new ArrayList<>(zombies);
+        //System.out.println("check size: " +  allZombies.size());
+        allZombies.addAll(convertingZombies); //no se si la pisa
+        //System.out.println("desp del addAll check size: " +  allZombies.size());
 
         double distance;
         for (Particle zombie : allZombies){
@@ -420,7 +381,6 @@ public class CPM {
     public static List<Double> nextWall(Particle particle, boolean isHuman) {
         double closestWallX;
         double closestWallY;
-
         // Centro circulo (0,0)
         double h = Math.sqrt(particle.getX()*particle.getX() + particle.getY()*particle.getY());
         if (h == 0) {
@@ -454,12 +414,11 @@ public class CPM {
                     zombieAngle = Math.toRadians(Math.random() * 360);
                     human.setRadio(Rmin);
                     zombie.setRadio(Rmin);
-                    //TODO que velocidad de deambulacion le ponemos
                     //deambulan
-                    human.setVx(0.0000001 * humanAngle);
-                    human.setVy(0.0000001 * humanAngle);
-                    zombie.setVx(0.0000001 * zombieAngle);
-                    zombie.setVy(0.0000001 * zombieAngle);
+                    human.setVx(auxV * humanAngle);
+                    human.setVy(auxV * humanAngle);
+                    zombie.setVx(auxV * zombieAngle);
+                    zombie.setVy(auxV * zombieAngle);
                     zombies.add(human);
                     zombies.add(zombie);
                 }
@@ -506,21 +465,4 @@ public class CPM {
         }
     }
 
-    private static void moveZombies() {
-        for (Particle zombie : zombies) {
-            zombie.setX(zombie.getX() + zombie.getVx() * deltaT);
-            zombie.setY(zombie.getY() + zombie.getVy() * deltaT);
-        }
-    }
-
-    private static void moveHumans(){
-        for(Particle human : humans) {
-            human.setX(human.getX() + human.getVx() * deltaT);
-            human.setY(human.getY() + human.getVy() * deltaT);
-        }
-    }
-
-    public static double getNorm(double x, double y){
-        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-    }
 }
